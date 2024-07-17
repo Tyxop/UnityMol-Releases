@@ -1,4 +1,4 @@
-using UnityEditor.Experimental.AssetImporters;
+
 using System.IO;
 using UnityEditor;
 using System;
@@ -8,7 +8,7 @@ using System.Reflection;
 using UnityEngine;
 
 [CustomEditor(typeof(PythonScriptsImporter))]
-internal class PythonScriptsImporterInspector:AssetImporterEditor{
+internal class PythonScriptsImporterInspector:UnityEditor.AssetImporters.AssetImporterEditor{
 	public override void OnInspectorGUI (){
 		//do nothing
 	}

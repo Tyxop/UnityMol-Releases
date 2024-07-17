@@ -98,9 +98,9 @@ public class UnityMolMain {
 		return "Release " + version;
 	}
 	public static bool inVR() {
-		return XRSettings.enabled && (XRSettings.loadedDeviceName != null
-		                              && !XRSettings.loadedDeviceName.StartsWith("stereo"))
-		       && VRTK.VRTK_SDKManager.instance != null;
+			return XRSettings.enabled && (XRSettings.loadedDeviceName != null
+										  && !XRSettings.loadedDeviceName.StartsWith("stereo"));
+	//	       && VRTK.VRTK_SDKManager.instance != null;
 	}
 
 	public static GameObject getRepresentationParent() {

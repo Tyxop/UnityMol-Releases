@@ -56,7 +56,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using VRTK;
+//using VRTK;
 
 namespace UMol {
 
@@ -80,6 +80,9 @@ public abstract class Reader {
     protected string fileNameWithoutExtension;
 
     public static int limitBigMolecule = 5000;
+
+
+    public Transform LeftController, RightController;
 
     public struct secStruct {
         public string chain;
@@ -232,12 +235,16 @@ public abstract class Reader {
 
         GameObject loadedMolGO = UnityMolMain.getRepresentationParent();
 
-        Transform repParent = loadedMolGO.transform.Find(sel.name);
-        if (UnityMolMain.inVR() && repParent == null) {
+       
 
+        Transform repParent = loadedMolGO.transform.Find(sel.name);
+        
+            /*if (UnityMolMain.inVR() && repParent == null) {
+
+            
             try {
-                Transform clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
-                Transform crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+                    Transform clref = LeftController;   // VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
+                    Transform crref = RightController;  //VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
                 if (clref != null) {
                     repParent = clref.Find(sel.name);
                 }
@@ -248,7 +255,7 @@ public abstract class Reader {
             catch { //VRTK didn't start so ignore this error
 
             }
-        }
+        }*/
 
         if (repParent == null) {
             repParent = (new GameObject(sel.name).transform);

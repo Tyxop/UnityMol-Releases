@@ -48,10 +48,11 @@
 
 
 using UnityEngine;
-using VRTK;
+//using VRTK;
+using VRGlue;
 using System.Collections;
 
-[RequireComponent(typeof(VRTK_InteractableObject))]
+//[RequireComponent(typeof(VRTK_InteractableObject))]
 public class OnControllerGrabExtension : MonoBehaviour {
     // this script demonstrates how to detect when this object has been grabbed by a controller.  
     // it requires the object already have the VRTK_InteractableObject attached.  
@@ -72,15 +73,17 @@ public class OnControllerGrabExtension : MonoBehaviour {
     {
 
         //make sure the object has the VRTK script attached... 
+        /*
         if (GetComponent<VRTK_InteractableObject>() == null)
         {
             Debug.LogError("OnControllerGrabExtension is required to be attached to an Object that has the VRTK_InteractableObject script attached to it");
             return;
         }
+        */
 
         //subscribe to the event.  NOTE: the "ObectGrabbed"  this is the procedure to invoke if this objectis grabbed.. 
-        GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += new InteractableObjectEventHandler(ObjectGrabbed);
-        GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += new InteractableObjectEventHandler(ObjectUngrabbed);
+        //GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += new InteractableObjectEventHandler(ObjectGrabbed);
+        //GetComponent<VRTK_InteractableObject>().InteractableObjectUngrabbed += new InteractableObjectEventHandler(ObjectUngrabbed);
 
         collidersT = transform.Find("Colliders");
         if(collidersT != null){

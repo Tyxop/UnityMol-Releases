@@ -50,150 +50,155 @@
 using UnityEngine;
 using System.Collections;
 using System.Text;
-using VRTK;
+//using VRTK;
 
 namespace UMol {
+
+/*
 [RequireComponent(typeof(VRTK_ControllerEvents))]
 [RequireComponent(typeof(ControllerGrabAndScale))]
 [RequireComponent(typeof(VRTK_UIPointer))]
-public class PointerMoveUI : MonoBehaviour {
+*/
+    public class PointerMoveUI : MonoBehaviour {
 
-    VRTK_UIPointer UIpointer;
-    VRTK_Pointer pointer;
-    VRTK_ControllerEvents controllerEvents;
-    ControllerGrabAndScale grabber;
+        //VRTK_UIPointer UIpointer;
+        //VRTK_Pointer pointer;
+        //VRTK_ControllerEvents controllerEvents;
+        ControllerGrabAndScale grabber;
 
-    public bool grabbedUI = false;
-    Transform UIT;
-    GameObject grabbedGo;
-    Transform savedParent;
+        public bool grabbedUI = false;
+        Transform UIT;
+        GameObject grabbedGo;
+        Transform savedParent;
 
-    GameObject menuToGrab = null;
+        GameObject menuToGrab = null;
 
-    float startPressedTime = 0.0f;
-    float minLongPress = 0.45f;//in s
+        float startPressedTime = 0.0f;
+        float minLongPress = 0.45f;//in s
 
-    void Start() {
+        void Start() {
 
-        if (UIpointer == null) {
-            UIpointer = GetComponent<VRTK_UIPointer>();
-            pointer = GetComponent<VRTK_Pointer>();
+                /*
+            if (UIpointer == null) {
+                UIpointer = GetComponent<VRTK_UIPointer>();
+                pointer = GetComponent<VRTK_Pointer>();
+            }
+            if (controllerEvents == null) {
+                controllerEvents = GetComponent<VRTK_ControllerEvents>();
+            }
+
+            if (grabber == null) {
+                grabber = GetComponent<ControllerGrabAndScale>();
+            }
+
+            UIpointer.UIPointerElementClick += UIPointerElementClick;
+            pointer.DestinationMarkerEnter += pointerCollided;
+            pointer.DestinationMarkerExit += pointerStopCollided;
+
+            controllerEvents.TriggerPressed += triggerClicked;
+            controllerEvents.TriggerReleased += triggerReleased;
+            controllerEvents.TriggerUnclicked += triggerReleased;
+            controllerEvents.TriggerTouchEnd += triggerReleased;
+
+            controllerEvents.ButtonTwoPressed += button2Pressed;
+            controllerEvents.ButtonTwoReleased += button2Released;
+                */
         }
-        if (controllerEvents == null) {
-            controllerEvents = GetComponent<VRTK_ControllerEvents>();
-        }
+            /*
+        private void pointerCollided(object sender, DestinationMarkerEventArgs e) {
+            if (e.raycastHit.collider.transform.name.StartsWith("Canvas")) {
+                Transform t = e.raycastHit.collider.transform;
+                Transform displ = t.Find("Displacement");
 
-        if (grabber == null) {
-            grabber = GetComponent<ControllerGrabAndScale>();
-        }
-
-        UIpointer.UIPointerElementClick += UIPointerElementClick;
-        pointer.DestinationMarkerEnter += pointerCollided;
-        pointer.DestinationMarkerExit += pointerStopCollided;
-
-        controllerEvents.TriggerPressed += triggerClicked;
-        controllerEvents.TriggerReleased += triggerReleased;
-        controllerEvents.TriggerUnclicked += triggerReleased;
-        controllerEvents.TriggerTouchEnd += triggerReleased;
-
-        controllerEvents.ButtonTwoPressed += button2Pressed;
-        controllerEvents.ButtonTwoReleased += button2Released;
-    }
-
-    private void pointerCollided(object sender, DestinationMarkerEventArgs e) {
-        if (e.raycastHit.collider.transform.name.StartsWith("Canvas")) {
-            Transform t = e.raycastHit.collider.transform;
-            Transform displ = t.Find("Displacement");
-
-            if (displ != null) {
-                menuToGrab = displ.gameObject;
+                if (displ != null) {
+                    menuToGrab = displ.gameObject;
+                }
             }
         }
-    }
 
-    private void pointerStopCollided(object send, DestinationMarkerEventArgs e) {
-        menuToGrab = null;
-    }
+        private void pointerStopCollided(object send, DestinationMarkerEventArgs e) {
+            menuToGrab = null;
+        }
 
-    private void triggerClicked(object sender, ControllerInteractionEventArgs e) {
-        if (menuToGrab != null && grabber.grabbedMolecule == null) {//Not grabbed a molecule
-            if(menuToGrab.transform.parent.parent == null) {//Not already grabbed by another controller
-                grabMenu(menuToGrab);
+        private void triggerClicked(object sender, ControllerInteractionEventArgs e) {
+            if (menuToGrab != null && grabber.grabbedMolecule == null) {//Not grabbed a molecule
+                if(menuToGrab.transform.parent.parent == null) {//Not already grabbed by another controller
+                    grabMenu(menuToGrab);
+                }
             }
         }
-    }
-    private void triggerReleased(object sender, ControllerInteractionEventArgs e) {
-        if (grabbedUI) {
-            releaseMenu();
-        }
-    }
-
-
-    private void UIPointerElementClick(object sender, UIPointerEventArgs e)
-    {
-        if (grabbedUI) { //Release the menu
-            releaseMenu();
-            return;
-        }
-        else {
-            if (e.currentTarget.name == "Displacement") {
-                grabMenu(e.currentTarget);
+        private void triggerReleased(object sender, ControllerInteractionEventArgs e) {
+            if (grabbedUI) {
+                releaseMenu();
             }
         }
-    }
 
-    private void grabMenu(GameObject toGrab) {
-        grabbedGo = toGrab;
-        savedParent = grabbedGo.transform.parent.parent;
-        grabbedGo.transform.parent.SetParent(transform, true);
-        grabbedUI = true;
-        VRTK_ControllerHaptics.TriggerHapticPulse(VRTK_ControllerReference.GetControllerReference(controllerEvents.gameObject), 1.0f);
-    }
 
-    private void releaseMenu() {
-        Vector3 savedP = grabbedGo.transform.parent.position;
-        Quaternion savedR = grabbedGo.transform.parent.rotation;
-
-        grabbedGo.transform.parent.SetParent(savedParent, true);
-        grabbedUI = false;
-        grabbedGo.transform.parent.position = savedP;
-        grabbedGo.transform.parent.rotation = savedR;
-        VRTK_ControllerHaptics.TriggerHapticPulse(VRTK_ControllerReference.GetControllerReference(controllerEvents.gameObject), 0.5f);
-    }
-
-    void button2Pressed(object sender, ControllerInteractionEventArgs e) {
-        startPressedTime = Time.realtimeSinceStartup;
-    }
-    void button2Released(object sender, ControllerInteractionEventArgs e) {
-        float diffTime = Time.realtimeSinceStartup - startPressedTime;
-
-        if (diffTime > minLongPress) {
-            //Detected long press
-            StartCoroutine(bringMenuCloser());
-        }
-    }
-
-    public IEnumerator bringMenuCloser() {
-        GameObject mainUIGo = GameObject.Find("CanvasMainUIVR");
-        Transform head = VRTK.VRTK_DeviceFinder.HeadsetCamera();
-
-        if (mainUIGo != null && head != null) {
-            Vector3 targetPos = head.position + head.forward;
-            Vector3 targetRot = head.rotation.eulerAngles;
-            int steps = 400;
-            for (int i = 1; i < steps / 4; i++) {
-                float tt = i / (float)steps;
-                mainUIGo.transform.position = Vector3.Lerp(mainUIGo.transform.position, targetPos, tt);
-
-                Vector3 newRot = new Vector3(Mathf.LerpAngle(mainUIGo.transform.eulerAngles.x, targetRot.x, tt),
-                                             Mathf.LerpAngle(mainUIGo.transform.eulerAngles.y, targetRot.y, tt),
-                                             Mathf.LerpAngle(mainUIGo.transform.eulerAngles.z, targetRot.z, tt));
-                mainUIGo.transform.eulerAngles = newRot;
-                yield return 0;
+        private void UIPointerElementClick(object sender, UIPointerEventArgs e)
+        {
+            if (grabbedUI) { //Release the menu
+                releaseMenu();
+                return;
+            }
+            else {
+                if (e.currentTarget.name == "Displacement") {
+                    grabMenu(e.currentTarget);
+                }
             }
         }
+
+        private void grabMenu(GameObject toGrab) {
+            grabbedGo = toGrab;
+            savedParent = grabbedGo.transform.parent.parent;
+            grabbedGo.transform.parent.SetParent(transform, true);
+            grabbedUI = true;
+            VRTK_ControllerHaptics.TriggerHapticPulse(VRTK_ControllerReference.GetControllerReference(controllerEvents.gameObject), 1.0f);
+        }
+
+        private void releaseMenu() {
+            Vector3 savedP = grabbedGo.transform.parent.position;
+            Quaternion savedR = grabbedGo.transform.parent.rotation;
+
+            grabbedGo.transform.parent.SetParent(savedParent, true);
+            grabbedUI = false;
+            grabbedGo.transform.parent.position = savedP;
+            grabbedGo.transform.parent.rotation = savedR;
+            VRTK_ControllerHaptics.TriggerHapticPulse(VRTK_ControllerReference.GetControllerReference(controllerEvents.gameObject), 0.5f);
+        }
+
+        void button2Pressed(object sender, ControllerInteractionEventArgs e) {
+            startPressedTime = Time.realtimeSinceStartup;
+        }
+        void button2Released(object sender, ControllerInteractionEventArgs e) {
+            float diffTime = Time.realtimeSinceStartup - startPressedTime;
+
+            if (diffTime > minLongPress) {
+                //Detected long press
+                StartCoroutine(bringMenuCloser());
+            }
+        }
+
+        public IEnumerator bringMenuCloser() {
+            GameObject mainUIGo = GameObject.Find("CanvasMainUIVR");
+            Transform head = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+
+            if (mainUIGo != null && head != null) {
+                Vector3 targetPos = head.position + head.forward;
+                Vector3 targetRot = head.rotation.eulerAngles;
+                int steps = 400;
+                for (int i = 1; i < steps / 4; i++) {
+                    float tt = i / (float)steps;
+                    mainUIGo.transform.position = Vector3.Lerp(mainUIGo.transform.position, targetPos, tt);
+
+                    Vector3 newRot = new Vector3(Mathf.LerpAngle(mainUIGo.transform.eulerAngles.x, targetRot.x, tt),
+                                                 Mathf.LerpAngle(mainUIGo.transform.eulerAngles.y, targetRot.y, tt),
+                                                 Mathf.LerpAngle(mainUIGo.transform.eulerAngles.z, targetRot.z, tt));
+                    mainUIGo.transform.eulerAngles = newRot;
+                    yield return 0;
+                }
+            }
+        }
+
+            */
     }
-
-
-}
 }

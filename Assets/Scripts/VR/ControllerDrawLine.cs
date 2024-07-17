@@ -53,18 +53,18 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using VRTK;
+//using VRTK;
 using UMol.API;
 
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_ControllerEvents))]
+//[RequireComponent(typeof(VRTK_ControllerEvents))]
 public class ControllerDrawLine : MonoBehaviour {
 
     public GameObject penGo;
 
-    VRTK_ControllerEvents controllerEvents;
+    //VRTK_ControllerEvents controllerEvents;
     Transform loadedMols;
     GameObject curGo;
     UnityMolStructure curS;
@@ -75,7 +75,7 @@ public class ControllerDrawLine : MonoBehaviour {
     void Start() {
         selM = UnityMolMain.getSelectionManager();
         sm = UnityMolMain.getStructureManager();
-
+/*
         if (controllerEvents == null) {
             controllerEvents = GetComponent<VRTK_ControllerEvents>();
         }
@@ -86,9 +86,9 @@ public class ControllerDrawLine : MonoBehaviour {
         controllerEvents.TriggerReleased += triggerReleased;
         controllerEvents.TriggerUnclicked += triggerReleased;
         controllerEvents.TriggerTouchEnd += triggerReleased;
-
+*/
     }
-
+        /*
     private void triggerClicked(object sender, ControllerInteractionEventArgs e) {
         if (sm.loadedStructures.Count == 0) {
             return;
@@ -128,7 +128,8 @@ public class ControllerDrawLine : MonoBehaviour {
 
 
     }
-
+        */
+        /*
     private void triggerReleased(object sender, ControllerInteractionEventArgs e) {
         if(UnityMolMain.getAnnotationManager().drawMode && curGo != null && lr != null){
             APIPython.annotateDrawLine(curS.uniqueName, lr.positions, Color.blue);
@@ -139,7 +140,7 @@ public class ControllerDrawLine : MonoBehaviour {
         curS = null;
         lr = null;
     }
-
+        */
     void Update() {
 
         if (!UnityMolMain.getAnnotationManager().drawMode) {

@@ -50,42 +50,65 @@
 using UnityEngine;
 using System.Collections;
 using System.Text;
-using VRTK;
+//using VRTK;
 using UMol.API;
 
+
 namespace UMol {
+ 
+    //[RequireComponent(typeof(VRTK_Pointer))]
+    //[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
+    public class PointerAtomSelection : MonoBehaviour {
 
-[RequireComponent(typeof(VRTK_Pointer))]
-[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
-public class PointerAtomSelection : MonoBehaviour {
-
-    VRTK_Pointer pointer;
-    VRTK_StraightPointerRendererNoRB pointerR;
+    //VRTK_Pointer pointer;
+    //VRTK_StraightPointerRendererNoRB pointerR;
     UnityMolSelectionManager selM;
     CustomRaycastBurst raycaster;
 
-    void OnEnable() {
+      
+
+        void OnEnable() {
 
         raycaster = UnityMolMain.getCustomRaycast();
 
-        if (pointer == null) {
-            pointer = GetComponent<VRTK_Pointer>();
-        }
-        if (pointerR == null) {
-            pointerR = GetComponent<VRTK_StraightPointerRendererNoRB>();
-        }
+        //if (pointer == null) {
+        //    pointer = GetComponent<VRTK_Pointer>();
+        //}
+        //if (pointerR == null) {
+        //    pointerR = GetComponent<VRTK_StraightPointerRendererNoRB>();
+        //}
+
         selM = UnityMolMain.getSelectionManager();
 
         // pointer.PointerStateValid += DetectedCollision;
         // pointer.PointerStateInvalid += buttonOut;
-        pointer.SelectionButtonPressed += buttonPressed;
-        // pointer.SelectionButtonReleased += buttonReleased;
-        pointer.ActivationButtonReleased += buttonReleased;
+
+        /// pointer.SelectionButtonPressed += buttonPressed;
+        
+            // pointer.SelectionButtonReleased += buttonReleased;
+       
+            
+            
+           /// pointer.ActivationButtonReleased += buttonReleased;
 
 
     }
 
-    void buttonPressed(object sender, ControllerInteractionEventArgs e) {
+        void buttonPressed(object sender)
+        {
+
+        }
+        void buttonReleased(object sender)
+        {
+           
+        }
+        void buttonOut(object sender)
+        {
+            
+        }
+
+        /*
+        void buttonPressed(object sender, ControllerInteractionEventArgs e) {
 
         UnityMolAtom a = raycaster.customRaycastAtomBurst(pointerR.actualContainer.transform.position, pointerR.actualTracer.transform.forward);
 
@@ -146,9 +169,12 @@ public class PointerAtomSelection : MonoBehaviour {
     void buttonOut(object sender, DestinationMarkerEventArgs e) {
         gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
     }
-    void OnDisable() {
+        
+         void OnDisable() {
         pointer.SelectionButtonPressed -= buttonPressed;
         pointer.ActivationButtonReleased -= buttonReleased;
     }
-}
+         */
+
+    }
 }

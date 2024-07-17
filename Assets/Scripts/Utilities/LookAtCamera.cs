@@ -51,7 +51,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using VRTK;
+//using VRTK;
 
 namespace UMol {
 
@@ -66,7 +66,7 @@ public class LookAtCamera : MonoBehaviour {
                 mainCam = Camera.main.transform;
         }
         else {
-            mainCam = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+            mainCam = VR_data.GetHeadSet();// VRTK.VRTK_DeviceFinder.HeadsetCamera();
         }
     }
     void Update() {
@@ -76,7 +76,7 @@ public class LookAtCamera : MonoBehaviour {
                     mainCam = Camera.main.transform;
             }
             else {
-                mainCam = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+                mainCam = VR_data.GetHeadSet(); //VRTK.VRTK_DeviceFinder.HeadsetCamera();
             }
         }
         if (mainCam != null) {

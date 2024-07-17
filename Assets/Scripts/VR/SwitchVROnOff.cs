@@ -64,6 +64,8 @@ public class SwitchVROnOff : MonoBehaviour {
 
     string prevLoadedDevice = "";
 
+    Transform LeftController, RightController;
+
     void Start() {
         if (room == null) {
             room = GameObject.Find("RoomVR");
@@ -104,8 +106,8 @@ public class SwitchVROnOff : MonoBehaviour {
         if (NotifMenu != null)
             NotifMenu.SetActive(false);
 
-        Transform clref = VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.LeftController);
-        Transform crref = VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.RightController);
+        Transform clref = LeftController;   // VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.LeftController);
+        Transform crref = RightController;  // VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.RightController);
 
         if (clref != null) {
             clref.parent.gameObject.SetActive(false);
@@ -140,8 +142,8 @@ public class SwitchVROnOff : MonoBehaviour {
             if (NotifMenu != null)
                 NotifMenu.SetActive(true);
 
-            Transform clref = VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.LeftController);
-            Transform crref = VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.RightController);
+            Transform clref = LeftController;   // VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.LeftController);
+            Transform crref = RightController;  // VRTK.VRTK_DeviceFinder.DeviceTransform(VRTK.VRTK_DeviceFinder.Devices.RightController);
 
             if (clref != null) {
                 clref.parent.gameObject.SetActive(true);

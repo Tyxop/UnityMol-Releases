@@ -51,16 +51,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using VRTK;
+//using VRTK;
 
 
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_ControllerEvents))]
+//[RequireComponent(typeof(VRTK_ControllerEvents))]
 public class GrapplingHookMolecule : MonoBehaviour {
 
-    VRTK_ControllerEvents controllerEvents;
+  //  VRTK_ControllerEvents controllerEvents;
     ControllerGrabAndScale cgs;
 	public Vector2 axisDeadzone = new Vector2(0.2f, 0.2f);
 	public float speedScale = 0.05f;
@@ -70,17 +70,18 @@ public class GrapplingHookMolecule : MonoBehaviour {
 
 
 	void OnEnable() {
-		controllerEvents = GetComponent<VRTK_ControllerEvents>();
+		/*controllerEvents = GetComponent<VRTK_ControllerEvents>();
 		cgs = GetComponent<ControllerGrabAndScale>();
 		isChanging = false;
 
 		controllerEvents.TouchpadTouchStart += TouchpadTouchStart;
 		controllerEvents.TouchpadTouchEnd += TouchpadTouchEnd;
+		*/
 	}
 
 	void Update(){
 
-		if(isChanging && cgs.grabbedMolecule != null){
+		/*if(isChanging && cgs.grabbedMolecule != null){
         	Vector2 actualAxis = controllerEvents.GetTouchpadAxis();
 			currentAxis = actualAxis;
 
@@ -99,10 +100,10 @@ public class GrapplingHookMolecule : MonoBehaviour {
 				// 	localPos.z = 0.0f;
 				// }
 			}
-		}
+		}*/
 	}
 
-	protected virtual void TouchpadTouchStart(object sender, ControllerInteractionEventArgs e)
+	/*protected virtual void TouchpadTouchStart(object sender, ControllerInteractionEventArgs e)
 	{
 		isChanging = true;
 	}
@@ -117,6 +118,6 @@ public class GrapplingHookMolecule : MonoBehaviour {
 	protected virtual bool OutsideDeadzone(float axisValue, float deadzoneThreshold)
 	{
 		return (axisValue > deadzoneThreshold || axisValue < -deadzoneThreshold);
-	}
+	}*/
 }
 }

@@ -54,7 +54,7 @@ using System.Text;
 using System.Collections.Generic;
 using UnityEngine.XR;
 
-using VRTK;
+//using VRTK;
 
 namespace UMol {
 
@@ -75,8 +75,8 @@ public class AtomRepresentationBondOrder : AtomRepresentation {
         representationParent = loadedMolGO.transform.Find(structName);
         if (UnityMolMain.inVR() && representationParent == null) {
 
-            Transform clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
-            Transform crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+            Transform clref = VR_data.LeftController;       //VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
+                Transform crref = VR_data.RightController;  //VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
             if (clref != null) {
                 representationParent = clref.Find(structName);
             }

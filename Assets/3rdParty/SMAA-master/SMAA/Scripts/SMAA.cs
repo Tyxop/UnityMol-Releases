@@ -266,7 +266,16 @@ namespace Smaa
 
 		void Clear(RenderTexture rt)
 		{
-			Graphics.Blit(rt, rt, Material, 0);
+			//Olde version
+			//Graphics.Blit(rt, rt, Material, 0);
+
+			if (Material == null)
+			{
+				Debug.LogError("Material is null");
+				return;
+			}
+
+			Graphics.Blit(null, rt, Material, 0);
 		}
 
 		RenderTexture TempRT(int width, int height, RenderTextureFormat format)

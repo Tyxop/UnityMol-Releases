@@ -53,7 +53,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using UMol.API;
-using VRTK;
+//using VRTK;
 
 namespace UMol {
 public class WrapperCudaSES  {

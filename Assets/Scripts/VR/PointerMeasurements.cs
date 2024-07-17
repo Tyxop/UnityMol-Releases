@@ -52,242 +52,242 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using VRTK;
+//using VRTK;
 using UMol.API;
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_Pointer), typeof(VRTK_ControllerEvents))]
-[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
-public class PointerMeasurements : MonoBehaviour {
+    //[RequireComponent(typeof(VRTK_Pointer), typeof(VRTK_ControllerEvents))]
+    //[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
+    public class PointerMeasurements : MonoBehaviour {
 
-    private MeasureMode prevMeasureMode = MeasureMode.distance;
+        /*private MeasureMode prevMeasureMode = MeasureMode.distance;
 
-    VRTK_Pointer pointer;
+        VRTK_Pointer pointer;
 
-    VRTK_ControllerEvents controllerEvents;
-    VRTK_StraightPointerRendererNoRB pointerR;
+        VRTK_ControllerEvents controllerEvents;
+        VRTK_StraightPointerRendererNoRB pointerR;
 
-    int touchedAtoms = 0;
+        int touchedAtoms = 0;
 
-    Transform camTransform;
+        Transform camTransform;
 
-    PointerHoverAtom hoverScript;
+        PointerHoverAtom hoverScript;
 
-    UnityMolSelectionManager selM;
-    UnityMolAnnotationManager annoM;
-    CustomRaycastBurst raycaster;
+        UnityMolSelectionManager selM;
+        UnityMolAnnotationManager annoM;
+        CustomRaycastBurst raycaster;
 
-    UnityMolAtom[] atomsArray = new UnityMolAtom[4];
+        UnityMolAtom[] atomsArray = new UnityMolAtom[4];*/
 
-    void Start() {
+        void Start() {
 
-        if (pointer == null) {
-            pointer = GetComponent<VRTK_Pointer>();
-        }
-        if (pointerR == null) {
-            pointerR = GetComponent<VRTK_StraightPointerRendererNoRB>();
-        }
-        controllerEvents = GetComponent<VRTK_ControllerEvents>();
-
-        // pointer.PointerStateValid += DetectedCollision;
-        // pointer.PointerStateInvalid += buttonOut;
-        controllerEvents.ButtonTwoPressed += buttonPressed;
-        controllerEvents.ButtonTwoReleased += buttonReleased;
-        // pointer.SelectionButtonPressed += buttonPressed;
-        // pointer.SelectionButtonReleased += buttonReleased;
-        // pointer.ActivationButtonReleased += buttonReleased;
-
-        touchedAtoms = 0;
-
-        selM = UnityMolMain.getSelectionManager();
-        annoM = UnityMolMain.getAnnotationManager();
-        raycaster = UnityMolMain.getCustomRaycast();
-
-
-    }
-
-    void buttonPressed(object sender, ControllerInteractionEventArgs e) {
-
-        if(prevMeasureMode != UnityMolMain.measureMode){
-            prevMeasureMode = UnityMolMain.measureMode;
-            resetTouchedAtoms();
-        }
-
-
-        UnityMolAtom a = raycaster.customRaycastAtomBurst(pointerR.actualContainer.transform.position, pointerR.actualTracer.transform.forward);
-
-        if (a != null) {
-
-            UnityMolStructureManager sm = UnityMolMain.getStructureManager();
-            UnityMolSelectionManager selM = UnityMolMain.getSelectionManager();
-
-            Transform atomPar = sm.structureToGameObject[a.residue.chain.model.structure.uniqueName].transform;
-
-            string textAtom = a.ToString();
-
-            Transform currentT = a.residue.chain.model.structure.atomToGo[a].transform;
-
-            if (touchedAtoms == 4) {
-                touchedAtoms = 0;
+          /*  if (pointer == null) {
+                pointer = GetComponent<VRTK_Pointer>();
             }
+            if (pointerR == null) {
+                pointerR = GetComponent<VRTK_StraightPointerRendererNoRB>();
+            }
+            controllerEvents = GetComponent<VRTK_ControllerEvents>();
 
-            atomsArray[touchedAtoms] = a;
+            // pointer.PointerStateValid += DetectedCollision;
+            // pointer.PointerStateInvalid += buttonOut;
+            controllerEvents.ButtonTwoPressed += buttonPressed;
+            controllerEvents.ButtonTwoReleased += buttonReleased;
+            // pointer.SelectionButtonPressed += buttonPressed;
+            // pointer.SelectionButtonReleased += buttonReleased;
+            // pointer.ActivationButtonReleased += buttonReleased;
 
-            if (atomsArray[touchedAtoms] == null || currentT == null) {
-                Debug.LogError("Problem measuring atoms");
+            touchedAtoms = 0;
+
+            selM = UnityMolMain.getSelectionManager();
+            annoM = UnityMolMain.getAnnotationManager();
+            raycaster = UnityMolMain.getCustomRaycast();
+          */
+
+        }
+    /*
+        void buttonPressed(object sender, ControllerInteractionEventArgs e) {
+
+            if(prevMeasureMode != UnityMolMain.measureMode){
+                prevMeasureMode = UnityMolMain.measureMode;
                 resetTouchedAtoms();
-                return;
             }
 
-            if (touchedAtoms > 0 && atomsArray[touchedAtoms - 1] == atomsArray[touchedAtoms]) {
-                //Touched the same atom = Stop measurements
-                resetTouchedAtoms();
-                return;
-            }
-            //Touched an atom from another molecule
-            if (touchedAtoms >= 1) {
-                bool sameStruc = true;
-                string sName = atomsArray[0].residue.chain.model.structure.uniqueName;
-                for (int i = 1; i <= touchedAtoms; i++) {
-                    if (sName != atomsArray[i].residue.chain.model.structure.uniqueName) {
-                        sameStruc = false;
-                        break;
-                    }
+
+            UnityMolAtom a = raycaster.customRaycastAtomBurst(pointerR.actualContainer.transform.position, pointerR.actualTracer.transform.forward);
+
+            if (a != null) {
+
+                UnityMolStructureManager sm = UnityMolMain.getStructureManager();
+                UnityMolSelectionManager selM = UnityMolMain.getSelectionManager();
+
+                Transform atomPar = sm.structureToGameObject[a.residue.chain.model.structure.uniqueName].transform;
+
+                string textAtom = a.ToString();
+
+                Transform currentT = a.residue.chain.model.structure.atomToGo[a].transform;
+
+                if (touchedAtoms == 4) {
+                    touchedAtoms = 0;
                 }
 
-                if (!sameStruc) {
-                    Debug.LogWarning("No inter-molecule measurements allowed");
+                atomsArray[touchedAtoms] = a;
+
+                if (atomsArray[touchedAtoms] == null || currentT == null) {
+                    Debug.LogError("Problem measuring atoms");
                     resetTouchedAtoms();
                     return;
                 }
-            }
 
-            string s1Name = null;
-            string s2Name = null;
-            string s3Name = null;
-            string s4Name = null;
+                if (touchedAtoms > 0 && atomsArray[touchedAtoms - 1] == atomsArray[touchedAtoms]) {
+                    //Touched the same atom = Stop measurements
+                    resetTouchedAtoms();
+                    return;
+                }
+                //Touched an atom from another molecule
+                if (touchedAtoms >= 1) {
+                    bool sameStruc = true;
+                    string sName = atomsArray[0].residue.chain.model.structure.uniqueName;
+                    for (int i = 1; i <= touchedAtoms; i++) {
+                        if (sName != atomsArray[i].residue.chain.model.structure.uniqueName) {
+                            sameStruc = false;
+                            break;
+                        }
+                    }
 
-            if (touchedAtoms == 0) {
-                s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                APIPython.annotateAtom(s1Name, atomsArray[0].idInAllAtoms);
-                touchedAtoms++;
-                return;
-            }
+                    if (!sameStruc) {
+                        Debug.LogWarning("No inter-molecule measurements allowed");
+                        resetTouchedAtoms();
+                        return;
+                    }
+                }
 
-            switch (UnityMolMain.measureMode) {
-            case MeasureMode.distance:
-                if (touchedAtoms == 1) {
+                string s1Name = null;
+                string s2Name = null;
+                string s3Name = null;
+                string s4Name = null;
+
+                if (touchedAtoms == 0) {
                     s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                    s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
+                    APIPython.annotateAtom(s1Name, atomsArray[0].idInAllAtoms);
+                    touchedAtoms++;
+                    return;
+                }
 
-                    APIPython.annotateLine(s1Name, atomsArray[0].idInAllAtoms,
-                                           s2Name, atomsArray[1].idInAllAtoms);
+                switch (UnityMolMain.measureMode) {
+                case MeasureMode.distance:
+                    if (touchedAtoms == 1) {
+                        s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
+                        s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
 
-                    APIPython.annotateDistance(s1Name, atomsArray[0].idInAllAtoms,
+                        APIPython.annotateLine(s1Name, atomsArray[0].idInAllAtoms,
                                                s2Name, atomsArray[1].idInAllAtoms);
 
-                    APIPython.annotateAtom(s2Name, atomsArray[1].idInAllAtoms);
-                    resetTouchedAtoms();
+                        APIPython.annotateDistance(s1Name, atomsArray[0].idInAllAtoms,
+                                                   s2Name, atomsArray[1].idInAllAtoms);
+
+                        APIPython.annotateAtom(s2Name, atomsArray[1].idInAllAtoms);
+                        resetTouchedAtoms();
+                    }
+                    break;
+                case MeasureMode.angle:
+                    if (touchedAtoms == 1) {
+                        s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
+                        s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
+
+                        APIPython.annotateLine(s1Name, atomsArray[0].idInAllAtoms,
+                                               s2Name, atomsArray[1].idInAllAtoms);
+
+                        APIPython.annotateAtom(s2Name, atomsArray[1].idInAllAtoms);
+                        touchedAtoms++;
+                    }
+                    if (touchedAtoms == 2) {
+                        s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
+                        s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
+                        s3Name = atomsArray[2].residue.chain.model.structure.uniqueName;
+
+                        APIPython.annotateAtom(s3Name, atomsArray[2].idInAllAtoms);
+
+                        APIPython.annotateLine(s2Name, atomsArray[1].idInAllAtoms,
+                                               s3Name, atomsArray[2].idInAllAtoms);
+
+                        APIPython.annotateAngle(s1Name, atomsArray[0].idInAllAtoms,
+                                                s2Name, atomsArray[1].idInAllAtoms,
+                                                s3Name, atomsArray[2].idInAllAtoms);
+
+                        APIPython.annotateArcLine(s1Name, atomsArray[0].idInAllAtoms,
+                                                  s2Name, atomsArray[1].idInAllAtoms,
+                                                  s3Name, atomsArray[2].idInAllAtoms);
+
+                        resetTouchedAtoms();
+                    }
+                    break;
+                case MeasureMode.torsAngle:
+
+                    if (touchedAtoms == 1) {
+                        s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
+                        s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
+
+                        APIPython.annotateLine(s1Name, atomsArray[0].idInAllAtoms,
+                                               s2Name, atomsArray[1].idInAllAtoms);
+
+                        APIPython.annotateAtom(s2Name, atomsArray[1].idInAllAtoms);
+                        touchedAtoms++;
+                    }
+                    if (touchedAtoms == 2) {
+                        s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
+                        s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
+                        s3Name = atomsArray[2].residue.chain.model.structure.uniqueName;
+
+                        APIPython.annotateLine(s2Name, atomsArray[1].idInAllAtoms,
+                                               s3Name, atomsArray[2].idInAllAtoms);
+
+                        APIPython.annotateAtom(s3Name, atomsArray[2].idInAllAtoms);
+                        touchedAtoms++;
+                    }
+                    if (touchedAtoms == 3) {
+                        s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
+                        s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
+                        s3Name = atomsArray[2].residue.chain.model.structure.uniqueName;
+                        s4Name = atomsArray[3].residue.chain.model.structure.uniqueName;
+
+                        APIPython.annotateAtom(s4Name, atomsArray[3].idInAllAtoms);
+
+                        APIPython.annotateLine(s3Name, atomsArray[2].idInAllAtoms,
+                                               s4Name, atomsArray[3].idInAllAtoms);
+                        APIPython.annotateDihedralAngle(s1Name, atomsArray[0].idInAllAtoms,
+                                                        s2Name, atomsArray[1].idInAllAtoms,
+                                                        s3Name, atomsArray[2].idInAllAtoms,
+                                                        s4Name, atomsArray[3].idInAllAtoms);
+
+                        APIPython.annotateRotatingArrow(s2Name, atomsArray[1].idInAllAtoms,
+                                                        s3Name, atomsArray[2].idInAllAtoms);
+                        resetTouchedAtoms();
+                    }
+                    break;
                 }
-                break;
-            case MeasureMode.angle:
-                if (touchedAtoms == 1) {
-                    s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                    s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
-
-                    APIPython.annotateLine(s1Name, atomsArray[0].idInAllAtoms,
-                                           s2Name, atomsArray[1].idInAllAtoms);
-
-                    APIPython.annotateAtom(s2Name, atomsArray[1].idInAllAtoms);
-                    touchedAtoms++;
-                }
-                if (touchedAtoms == 2) {
-                    s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                    s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
-                    s3Name = atomsArray[2].residue.chain.model.structure.uniqueName;
-
-                    APIPython.annotateAtom(s3Name, atomsArray[2].idInAllAtoms);
-
-                    APIPython.annotateLine(s2Name, atomsArray[1].idInAllAtoms,
-                                           s3Name, atomsArray[2].idInAllAtoms);
-
-                    APIPython.annotateAngle(s1Name, atomsArray[0].idInAllAtoms,
-                                            s2Name, atomsArray[1].idInAllAtoms,
-                                            s3Name, atomsArray[2].idInAllAtoms);
-
-                    APIPython.annotateArcLine(s1Name, atomsArray[0].idInAllAtoms,
-                                              s2Name, atomsArray[1].idInAllAtoms,
-                                              s3Name, atomsArray[2].idInAllAtoms);
-
-                    resetTouchedAtoms();
-                }
-                break;
-            case MeasureMode.torsAngle:
-
-                if (touchedAtoms == 1) {
-                    s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                    s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
-
-                    APIPython.annotateLine(s1Name, atomsArray[0].idInAllAtoms,
-                                           s2Name, atomsArray[1].idInAllAtoms);
-
-                    APIPython.annotateAtom(s2Name, atomsArray[1].idInAllAtoms);
-                    touchedAtoms++;
-                }
-                if (touchedAtoms == 2) {
-                    s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                    s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
-                    s3Name = atomsArray[2].residue.chain.model.structure.uniqueName;
-
-                    APIPython.annotateLine(s2Name, atomsArray[1].idInAllAtoms,
-                                           s3Name, atomsArray[2].idInAllAtoms);
-
-                    APIPython.annotateAtom(s3Name, atomsArray[2].idInAllAtoms);
-                    touchedAtoms++;
-                }
-                if (touchedAtoms == 3) {
-                    s1Name = atomsArray[0].residue.chain.model.structure.uniqueName;
-                    s2Name = atomsArray[1].residue.chain.model.structure.uniqueName;
-                    s3Name = atomsArray[2].residue.chain.model.structure.uniqueName;
-                    s4Name = atomsArray[3].residue.chain.model.structure.uniqueName;
-
-                    APIPython.annotateAtom(s4Name, atomsArray[3].idInAllAtoms);
-
-                    APIPython.annotateLine(s3Name, atomsArray[2].idInAllAtoms,
-                                           s4Name, atomsArray[3].idInAllAtoms);
-                    APIPython.annotateDihedralAngle(s1Name, atomsArray[0].idInAllAtoms,
-                                                    s2Name, atomsArray[1].idInAllAtoms,
-                                                    s3Name, atomsArray[2].idInAllAtoms,
-                                                    s4Name, atomsArray[3].idInAllAtoms);
-
-                    APIPython.annotateRotatingArrow(s2Name, atomsArray[1].idInAllAtoms,
-                                                    s3Name, atomsArray[2].idInAllAtoms);
-                    resetTouchedAtoms();
-                }
-                break;
             }
+
         }
 
+        void buttonOut(object sender, DestinationMarkerEventArgs e) {
+            gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
+        }
+
+        void buttonReleased(object sender, ControllerInteractionEventArgs e) {
+            gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
+        }
+        public void resetTouchedAtoms() {
+            touchedAtoms = 0;
+            gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
+        }*/
     }
 
-    void buttonOut(object sender, DestinationMarkerEventArgs e) {
-        gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
+    public enum MeasureMode {
+        distance = 0,
+        angle = 1,
+        torsAngle = 2
     }
-
-    void buttonReleased(object sender, ControllerInteractionEventArgs e) {
-        gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
-    }
-    public void resetTouchedAtoms() {
-        touchedAtoms = 0;
-        gameObject.GetComponent<VRTK_UIPointer>().enabled = true;
-    }
-}
-
-public enum MeasureMode {
-    distance = 0,
-    angle = 1,
-    torsAngle = 2
-}
 
 }

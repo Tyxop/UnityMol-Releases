@@ -49,10 +49,10 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using VRTK;
+//using VRTK;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(MeshFilter), typeof(VRTK_ControllerEvents))]
+//[RequireComponent(typeof(MeshFilter), typeof(VRTK_ControllerEvents))]
 public class GeometricalSelection : MonoBehaviour {
 
     public enum GeometrySelectionMode

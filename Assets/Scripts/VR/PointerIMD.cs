@@ -50,17 +50,17 @@
 using UnityEngine;
 using System.Collections;
 using System.Text;
-using VRTK;
+//using VRTK;
 using UMol.API;
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_Pointer))]
-[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
+//[RequireComponent(typeof(VRTK_Pointer))]
+//[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
 public class PointerIMD : MonoBehaviour {
 
-    VRTK_Pointer pointer;
-    VRTK_StraightPointerRendererNoRB pointerR;
+   // VRTK_Pointer pointer;
+    //VRTK_StraightPointerRendererNoRB pointerR;
     UnityMolSelectionManager selM;
     PointerHoverAtom hoveringScript;
     CustomRaycastBurst raycaster;
@@ -68,13 +68,13 @@ public class PointerIMD : MonoBehaviour {
     Vector3 initPos;
     Vector3 initPosA;
     Vector3 initVec;
-    VRTK_ControllerReference controllerReference;
+    //VRTK_ControllerReference controllerReference;
 
     Transform atomT;
     GameObject arrow;
 
     void OnEnable() {
-        raycaster = UnityMolMain.getCustomRaycast();
+      /*  raycaster = UnityMolMain.getCustomRaycast();
 
         if (pointer == null) {
             pointer = GetComponent<VRTK_Pointer>();
@@ -96,9 +96,10 @@ public class PointerIMD : MonoBehaviour {
 
         pointer.SelectionButtonPressed += buttonPressed;
         pointer.ActivationButtonReleased += buttonReleased;
+      */
     }
 
-
+        /*
 
     void buttonPressed(object sender, ControllerInteractionEventArgs e) {
 
@@ -232,5 +233,8 @@ public class PointerIMD : MonoBehaviour {
         arrow.transform.parent = null;
         arrow.GetComponent<MeshRenderer>().enabled = false;
     }
+
+        */
+
 }
 }

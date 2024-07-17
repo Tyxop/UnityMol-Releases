@@ -51,15 +51,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using VRTK;
+//using VRTK;
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_VelocityEstimator))]
+//[RequireComponent(typeof(VRTK_VelocityEstimator))]
 public class ControllerShakeDetector : MonoBehaviour {
 
-	VRTK_VelocityEstimator veloEstim;
-	public float thresholdMagnitude = 50000.0f;
+		//VRTK_VelocityEstimator veloEstim;
+		 
+		public float thresholdMagnitude = 50000.0f;
 	public float catchTime = 0.25f;
 	private float pauseTime = 0.7f;
 	private float lastEventTime = 0.0f;
@@ -70,11 +71,11 @@ public class ControllerShakeDetector : MonoBehaviour {
 	public event ShakeDetected OnShakeDetected;
 
 	void OnEnable() {
-		veloEstim = GetComponent<VRTK_VelocityEstimator>();
+			//veloEstim = 1.0f; //GetComponent<VRTK_VelocityEstimator>();
 	}
 
 	void Update() {
-		Vector3 accel = veloEstim.GetAccelerationEstimate();
+			Vector3 accel = Vector3.one; //veloEstim.GetAccelerationEstimate();
 
 		if (accel.sqrMagnitude > thresholdMagnitude) {
 			float curTime = Time.time;

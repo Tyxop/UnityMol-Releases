@@ -51,21 +51,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using VRTK;
+//using VRTK;
 
 /// Grab a molecule (trigger button) or a group of molecules (grip button)
 /// Scale using both controllers on the same molecule
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_ControllerEvents))]
-[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
+//[RequireComponent(typeof(VRTK_ControllerEvents))]
+//[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
 public class ControllerGrabAndScale : MonoBehaviour {
 
     public ControllerGrabAndScale otherController;
 
-    VRTK_ControllerEvents controllerEvents;
-    VRTK_StraightPointerRendererNoRB pointerR;
+   // VRTK_ControllerEvents controllerEvents;
+    //VRTK_StraightPointerRendererNoRB pointerR;
     public Transform grabbedMolecule = null;
     public Vector3 grabbedCenterOfGravity = Vector3.zero;
     public List<Transform> grabbedGroupMolecules = new List<Transform>();
@@ -99,7 +99,7 @@ public class ControllerGrabAndScale : MonoBehaviour {
     }
 
     void Start() {
-        sm = UnityMolMain.getStructureManager();
+       /* sm = UnityMolMain.getStructureManager();
         raycaster = UnityMolMain.getCustomRaycast();
         notUILayer = ~ LayerMask.GetMask("UI", "Ignore Raycast");
 
@@ -132,10 +132,10 @@ public class ControllerGrabAndScale : MonoBehaviour {
             else {
                 otherController = GameObject.Find("LeftController").GetComponent<ControllerGrabAndScale>();
             }
-        }
+        }*/
     }
 
-
+        /*
     private void triggerClicked(object sender, ControllerInteractionEventArgs e) {
 
         if (isGroupGrabbed) {
@@ -389,6 +389,6 @@ public class ControllerGrabAndScale : MonoBehaviour {
             }
 
         }
-    }
+    }*/
 }
 }

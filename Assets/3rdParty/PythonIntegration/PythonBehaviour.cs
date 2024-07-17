@@ -93,9 +93,12 @@ public class PythonBehaviour : MonoBehaviour {
 		if (m_scope == null) {
 			m_scope = PythonUtils.GetEngine ().CreateScope ();
 		}
+		
+		/*
 		m_scope.SetVariable ("owner", this);
 		m_scope.SetVariable ("gameObject", gameObject);
 		m_scope.SetVariable ("transform", transform);
+		*/
 		scopeInitializedWithScript = false;
 	}
 

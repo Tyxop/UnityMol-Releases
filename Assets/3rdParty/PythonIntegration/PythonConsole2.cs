@@ -155,7 +155,9 @@ public class PythonConsole2 : MonoBehaviour {
 
     void RecreateScope() {
         m_scope = PythonUtils.GetEngine ().CreateScope ();
-        m_scope.SetVariable ("console", this);
+      
+        // Esto falla pero no se como se puede arreglar o si es necesarion... el python sirve de algo?¿ ... es necesario para lo que necesitro
+        // m_scope.SetVariable ("console", this);
 
         var fullScript = PythonUtils.defaultPythonConsoleHeader + getAPIPythonMethods() + GlobalAssemblyImport ();
         PythonUtils.GetEngine ().Execute (fullScript, m_scope);
@@ -213,9 +215,9 @@ public class PythonConsole2 : MonoBehaviour {
     void UpdateSelection ()
     {
 #if UNITY_EDITOR
-        if (Application.isEditor) {
+        /*if (Application.isEditor) {
             m_scope.SetVariable ("selection", UnityEditor.Selection.activeObject);
-        }
+        }*/
 #endif
     }
 

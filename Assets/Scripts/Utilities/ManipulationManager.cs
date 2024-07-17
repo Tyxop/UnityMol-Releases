@@ -114,7 +114,7 @@ public class ManipulationManager : MonoBehaviour {
             else {
                 tpar.Translate(-worldBary, Space.World);
 
-                Transform head = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+                    Transform head = Camera.main.transform; // VRTK.VRTK_DeviceFinder.HeadsetCamera();
 
                 if (head != null) {
                     Vector3 targetPos = head.position + head.forward;
@@ -149,7 +149,7 @@ public class ManipulationManager : MonoBehaviour {
 
 
         if (UnityMolMain.inVR()) {
-            Transform head = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+                Transform head = Camera.main.transform; // VRTK.VRTK_DeviceFinder.HeadsetCamera();
             if (head != null) {
                 Vector3 headTarget = head.position + head.forward;
                 tpar.Translate(headTarget, Space.World);
@@ -197,7 +197,7 @@ public class ManipulationManager : MonoBehaviour {
             else {
                 tpar.Translate(-worldBary, Space.World);
 
-                Transform head = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+                    Transform head = VR_data.GetHeadSet(); //VRTK.VRTK_DeviceFinder.HeadsetCamera();
 
                 if (head != null) {
                     Vector3 targetPos = head.position + (head.forward * distance);
@@ -232,8 +232,8 @@ public class ManipulationManager : MonoBehaviour {
 
 
         if (UnityMolMain.inVR()) {
-            Transform head = VRTK.VRTK_DeviceFinder.HeadsetCamera();
-            if (head != null) {
+            Transform head = VR_data.GetHeadSet(); //VRTK.VRTK_DeviceFinder.HeadsetCamera();
+                if (head != null) {
                 Vector3 headTarget = head.position + head.forward;
                 tpar.Translate(headTarget, Space.World);
             }

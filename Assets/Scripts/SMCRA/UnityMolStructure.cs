@@ -52,7 +52,7 @@ using UnityEngine.XR;
 using System.Collections.Generic;
 using System.Linq;
 
-using VRTK;
+//using VRTK;
 namespace UMol {
 
 /// <summary>
@@ -189,6 +189,9 @@ public class UnityMolStructure {
 	/// Array of GameObjects, one for each atom, created in Reader.cs
 	/// </summary>
 	private GameObject[] atomGos;
+
+
+		public Transform LeftController, RightController;
 
 	public enum MolecularType {
 		standard,//All-atoms
@@ -356,8 +359,9 @@ public class UnityMolStructure {
 				Transform sP = loadedMolGO.transform.Find(ToSelectionName());
 				if (UnityMolMain.inVR() && sP == null) {
 
-					Transform clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
-					Transform crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+					Transform clref = LeftController;	// VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
+					Transform crref = RightController;	//VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+
 					if (clref != null) {
 						sP = clref.Find(sName);
 					}

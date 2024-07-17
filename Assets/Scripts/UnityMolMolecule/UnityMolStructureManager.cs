@@ -51,9 +51,9 @@ using UnityEngine;
 using UnityEngine.XR;
 using System.Collections.Generic;
 
-using VRTK;
-using VRTK.GrabAttachMechanics;
-using VRTK.SecondaryControllerGrabActions;
+//using VRTK;
+//using VRTK.GrabAttachMechanics;
+//using VRTK.SecondaryControllerGrabActions;
 
 
 namespace UMol {
@@ -118,14 +118,14 @@ public class UnityMolStructureManager {
 		Transform result = loadedMolGO.transform.Find(sName);
 		if (UnityMolMain.inVR() && result == null) {
 
-			Transform clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
-			Transform crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
-			if (clref != null) {
-				result = clref.Find(sName);
-			}
-			if (result == null && crref != null) {
-				result = crref.Find(sName);
-			}
+			//Transform clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
+			//Transform crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+			//if (clref != null) {
+			//	result = clref.Find(sName);
+			//}
+			//if (result == null && crref != null) {
+			//	result = crref.Find(sName);
+			//}
 		}
 		return result;
 	}

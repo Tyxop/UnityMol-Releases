@@ -52,18 +52,18 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using VRTK;
+//using VRTK;
 using UMol.API;
 
 namespace UMol
 {
 
-[RequireComponent(typeof(VRTK_ControllerEvents))]
-[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
+//[RequireComponent(typeof(VRTK_ControllerEvents))]
+//[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
 
 public class MenuCommands : MonoBehaviour
 {
-    VRTK_ControllerEvents controllerEvents;
+    //VRTK_ControllerEvents controllerEvents;
 
     public bool Button2Click = false;
     public bool TriggerClick = false;
@@ -78,14 +78,16 @@ public class MenuCommands : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        controllerEvents = GetComponent<VRTK_ControllerEvents>();
+        // TODO ::  Poner el control de eventos generico
 
-        controllerEvents.ButtonTwoPressed += buttonPressed;
-        controllerEvents.ButtonTwoReleased += buttonReleased;
-        controllerEvents.TriggerPressed += triggerClicked;
-        controllerEvents.TriggerReleased += triggerReleased;
-        controllerEvents.GripPressed += gripPressed;
-        controllerEvents.GripReleased += gripReleased;
+        //controllerEvents = GetComponent<VRTK_ControllerEvents>();
+
+        //controllerEvents.ButtonTwoPressed += buttonPressed;
+        //controllerEvents.ButtonTwoReleased += buttonReleased;
+        //controllerEvents.TriggerPressed += triggerClicked;
+        //controllerEvents.TriggerReleased += triggerReleased;
+        //controllerEvents.GripPressed += gripPressed;
+        //controllerEvents.GripReleased += gripReleased;
     }
 
     // Update is called once per frame
@@ -123,35 +125,35 @@ public class MenuCommands : MonoBehaviour
         }
     }
 
-    void buttonPressed(object sender, ControllerInteractionEventArgs e)
-    {
-        Button2Click = true;
-    }
+    //void buttonPressed(object sender, ControllerInteractionEventArgs e)
+    //{
+    //    Button2Click = true;
+    //}
 
-    void buttonReleased(object sender, ControllerInteractionEventArgs e)
-    {
-        Button2Click = false;
-    }
+    //void buttonReleased(object sender, ControllerInteractionEventArgs e)
+    //{
+    //    Button2Click = false;
+    //}
 
-    void triggerClicked(object sender, ControllerInteractionEventArgs e)
-    {
-        TriggerClick = true;
-    }
+    //void triggerClicked(object sender, ControllerInteractionEventArgs e)
+    //{
+    //    TriggerClick = true;
+    //}
 
-    void triggerReleased(object sender, ControllerInteractionEventArgs e)
-    {
-        TriggerClick = false;
-    }
+    //void triggerReleased(object sender, ControllerInteractionEventArgs e)
+    //{
+    //    TriggerClick = false;
+    //}
 
-    void gripPressed(object sender, ControllerInteractionEventArgs e)
-    {
-        gripClick = true;
-    }
+    //void gripPressed(object sender, ControllerInteractionEventArgs e)
+    //{
+    //    gripClick = true;
+    //}
 
-    void gripReleased(object sender, ControllerInteractionEventArgs e)
-    {
-        gripClick = false;
-    }
+    //void gripReleased(object sender, ControllerInteractionEventArgs e)
+    //{
+    //    gripClick = false;
+    //}
 
     public void keepMenuOnHand (bool followingHand)
     {

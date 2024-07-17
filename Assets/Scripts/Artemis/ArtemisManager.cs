@@ -55,7 +55,7 @@ using System.Threading;
 using System.Linq;
 using UnityEngine.XR;
 
-using VRTK;
+//using VRTK;
 
 using ArtemisClientPointer = System.IntPtr;
 
@@ -234,6 +234,8 @@ public class ArtemisManager : MonoBehaviour {
     private Transform clref;
     private Transform crref;
 
+    public Transform LeftController, RightController;
+    
     private List<float> coordinatesForces = new List<float>();
     private List<int> indicesForces = new List<int>();
     private List<int> savedIndices = new List<int>();
@@ -379,10 +381,10 @@ public class ArtemisManager : MonoBehaviour {
     void switchControllerMode(bool IMDOn) {
 
         if (UnityMolMain.inVR()) {
-            if (clref == null)
-                clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
-            if (crref == null)
-                crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+                if (clref == null)
+                    clref = LeftController; //VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
+                if (crref == null)
+                    crref = RightController; //VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
 
             if (clref != null) {
                 clref.gameObject.GetComponent<PointerAtomSelection>().enabled = !IMDOn;

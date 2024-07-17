@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
-using UnityEditor.Experimental.AssetImporters;
+
 using System.IO;
 
-[ScriptedImporter(1, "py")]
-public class PythonScriptsImporter : ScriptedImporter{
-	public override void OnImportAsset(AssetImportContext ctx){
+[UnityEditor.AssetImporters.ScriptedImporter(1, "py")]
+public class PythonScriptsImporter : UnityEditor.AssetImporters.ScriptedImporter{
+	public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx){
 		var existedPythonScriptAsset = UnityEditor.AssetDatabase.LoadMainAssetAtPath (ctx.assetPath) as PythonScript;
 		//script text
 		var text = File.ReadAllText (ctx.assetPath);

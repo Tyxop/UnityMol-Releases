@@ -50,15 +50,15 @@
 using UnityEngine;
 using System.Collections;
 using System.Text;
-using VRTK;
+//using VRTK;
 
 namespace UMol {
 
-[RequireComponent(typeof(VRTK_Pointer))]
-[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
+//[RequireComponent(typeof(VRTK_Pointer))]
+//[RequireComponent(typeof(VRTK_StraightPointerRendererNoRB))]
 public class PointerHoverAtom : MonoBehaviour {
 
-    VRTK_Pointer pointer;
+   /* VRTK_Pointer pointer;
     VRTK_StraightPointerRendererNoRB pointerR;
     GameObject haloGo;
     TextMesh textm;
@@ -70,10 +70,11 @@ public class PointerHoverAtom : MonoBehaviour {
     float hoverScaleMultiplier = 1.0f;
 
     public bool pauseHovering = false;
-
+   */
 
     void Start() {
-        raycaster = UnityMolMain.getCustomRaycast();
+
+        /*raycaster = UnityMolMain.getCustomRaycast();
 
         if (pointer == null) {
             pointer = GetComponent<VRTK_Pointer>();
@@ -92,7 +93,7 @@ public class PointerHoverAtom : MonoBehaviour {
         // haloGo.layer = LayerMask.NameToLayer("Ignore Raycast");
         haloGo.SetActive(false);
         textm.gameObject.GetComponent<MeshRenderer>().sortingOrder = 50;
-
+        */
     }
 
     // void DetectedCollision(object sender, DestinationMarkerEventArgs e) {
@@ -102,14 +103,14 @@ public class PointerHoverAtom : MonoBehaviour {
 
     // }
     void Update() {
-        if(pauseHovering){
+        /*if(pauseHovering){
             disableHovering();
             return;
         }
         if (pressed) {
             showHover();
             // showHover(pointer.pointerRenderer.GetDestinationHit());
-        }
+        }*/
     }
     public static string formatAtomText(UnityMolAtom a) {
         string nameS = a.residue.chain.model.structure.formatName(25);
@@ -124,12 +125,12 @@ public class PointerHoverAtom : MonoBehaviour {
         // textAtom = ReplaceFirstOccurrance(textAtom, "|", "\n");
         // textAtom = ReplaceFirstOccurrance(textAtom, ">", "");
 
-
+        
         return textAtom;
     }
     void showHover() {
 
-        UnityMolAtom a = raycaster.customRaycastAtomBurst(pointerR.actualContainer.transform.position, pointerR.actualContainer.transform.forward);
+       /* UnityMolAtom a = raycaster.customRaycastAtomBurst(pointerR.actualContainer.transform.position, pointerR.actualContainer.transform.forward);
         if (a != null) {
             if (haloGo == null) {
                 haloGo = GameObject.Instantiate((GameObject) Resources.Load("Prefabs/SphereOverAtom"));
@@ -160,28 +161,30 @@ public class PointerHoverAtom : MonoBehaviour {
             pointerR.maximumLength = dist;
             pointerR.SetValidColor();
 
-        }
+        }*/
 
     }
     void disableHovering() {
-        if (haloGo != null) {
+       /* if (haloGo != null) {
             haloGo.SetActive(false);
             haloGo.transform.parent = null;
         }
-        pointerR.maximumLength = 100;
+        pointerR.maximumLength = 100;*/
     }
 
-    void OutCollision(object sender, DestinationMarkerEventArgs e) {
-        disableHovering();
+    /*void OutCollision(object sender, DestinationMarkerEventArgs e) {
+       /* disableHovering();*/
     }
-    void buttonReleased(object sender, ControllerInteractionEventArgs e) {
-        disableHovering();
-        pressed = false;
-    }
-    void buttonPressed(object sender, ControllerInteractionEventArgs e) {
-        pressed = true;
-    }
-    public static string ReplaceFirstOccurrance(string original, string oldValue, string newValue)
+    //void buttonReleased(object sender, ControllerInteractionEventArgs e) {
+       /* disableHovering();
+        pressed = false;*/
+    //}
+    //void buttonPressed(object sender, ControllerInteractionEventArgs e) {
+       // pressed = true;
+    //}
+     
+
+    /*public static string ReplaceFirstOccurrance(string original, string oldValue, string newValue)
     {
         if (string.IsNullOrEmpty(original))
             return "";
@@ -189,6 +192,7 @@ public class PointerHoverAtom : MonoBehaviour {
             return original;
         int loc = original.IndexOf(oldValue);
         return original.Remove(loc, oldValue.Length).Insert(loc, newValue);
-    }
+
+    }*/
 }
-}
+

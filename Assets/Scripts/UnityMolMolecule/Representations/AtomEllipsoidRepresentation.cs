@@ -53,7 +53,7 @@ using System.Collections;
 using System.Text;
 using System.Collections.Generic;
 using UnityEngine.XR;
-using VRTK;
+//using VRTK;
 
 
 
@@ -70,7 +70,11 @@ public class AtomEllipsoidRepresentation : AtomRepresentation {
 	public bool withShadow = true;
 
 
-	public AtomEllipsoidRepresentation(string structName, UnityMolSelection sel) {
+
+		public Transform LeftController, RightController;
+
+
+		public AtomEllipsoidRepresentation(string structName, UnityMolSelection sel) {
         colorationType = colorType.atom;
 
 		GameObject loadedMolGO = UnityMolMain.getRepresentationParent();
@@ -78,8 +82,9 @@ public class AtomEllipsoidRepresentation : AtomRepresentation {
 		representationParent = loadedMolGO.transform.Find(structName);
 		if (UnityMolMain.inVR() && representationParent == null) {
 
-			Transform clref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
-			Transform crref = VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+			Transform clref = LeftController;//VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.LeftController);
+			Transform crref = RightController;//VRTK_DeviceFinder.DeviceTransform(VRTK_DeviceFinder.Devices.RightController);
+
 			if (clref != null) {
 				representationParent = clref.Find(structName);
 			}

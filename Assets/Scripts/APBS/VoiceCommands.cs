@@ -53,13 +53,18 @@ using System.Linq;
 using System;
 using System.Collections;
 using UnityEngine;
+
+#if UNITY_STANDALONE_WIN
 using UnityEngine.Windows.Speech;
+#endif
+
 using UMol.API;
 
 namespace UMol
 {
     public class VoiceCommands : MonoBehaviour
     {
+        /*
         // Voice command vars
         private Dictionary<string, Action> keyActs = new Dictionary<string, Action>();
         private KeywordRecognizer recognizer;
@@ -274,8 +279,10 @@ namespace UMol
 
         void switchToDesktop()
         {
-            Transform HMD = VRTK.VRTK_DeviceFinder.HeadsetCamera();
-            HMD.gameObject.GetComponent<SwitchVROnOff>().switchVR();
+           
+           //Transform HMD = VRTK.VRTK_DeviceFinder.HeadsetCamera();
+           //HMD.gameObject.GetComponent<SwitchVROnOff>().switchVR();
+            
         }
 
         void takeScreenShot()
@@ -295,5 +302,6 @@ namespace UMol
         {
             APIPython.switchRotateAxisZ();
         }
+    */
     }
 }
