@@ -67,7 +67,7 @@ public class PDBxReader: Reader {
     public static string[] PDBxextensions = {"cif", "cif.gz", "mmcif", "mmcif.gz"};
 
     private float timeOut = 10.0f;
-    private string PDBxServer = "https://ftp.wwpdb.org/pub/pdb/data/structures/all/mmCIF/";
+    private string PDBxServer = "https://files.wwpdb.org/pub/pdb/data/structures/all/mmCIF/";
 
     public PDBxReader(string fileName = "", string PDBxServer = ""): base(fileName)
     {
@@ -141,8 +141,9 @@ public class PDBxReader: Reader {
 
         string entryURL = PDBxServer + entryCodeLow + extension;
         Debug.Log("Fetching " + entryCode);
+        Debug.Log("URL " + entryURL);
 
-        UnityMolStructure structure = null;
+            UnityMolStructure structure = null;
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(entryURL);
         request.Timeout = 5000;

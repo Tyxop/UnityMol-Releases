@@ -63,6 +63,8 @@ using UnityEngine.UI.Extensions.ColorPicker;
 using UnityEngine.EventSystems;
 
 using UMol.API;
+using TMPro;
+
 
 
 namespace UMol {
@@ -234,7 +236,13 @@ public class UIManager : MonoBehaviour {
 		StartCoroutine(fetch(t.text));
 	}
 
-	public IEnumerator fetch(string t) {
+	public void wrapperFetchTMpro(TMPro.TMP_InputField t)
+	{
+		StartCoroutine(fetch(t.text));
+	}
+
+
+		public IEnumerator fetch(string t) {
 		if (string.IsNullOrEmpty(t)) {
 			if (inFPDB == null) {
 				inFPDB = GameObject.Find("InputFieldPDB").GetComponent<InputField>();
@@ -2183,7 +2191,7 @@ public class UIManager : MonoBehaviour {
 
 		GameObject curUIInput = EventSystem.current.currentSelectedGameObject;
 
-		if (curUIInput == null && Input.GetButton("Hyperballs")) {
+	/*	if (curUIInput == null && Input.GetButton("Hyperballs")) {
 			showHB();
 		}
 		if (curUIInput == null && Input.GetButton("Cartoon")) {
@@ -2198,7 +2206,7 @@ public class UIManager : MonoBehaviour {
 		if (curUIInput == null && Input.GetButton("Screenshot")) {
 			saveScreenshot();
 		}
-
+	*/
 		if(showUpdateRepVisiUI){
 			updateRepVisiUI();
 		}

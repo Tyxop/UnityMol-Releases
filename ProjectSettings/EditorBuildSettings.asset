@@ -5,16 +5,34 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Samples/XR Hands/1.4.1/HandVisualizer/HandVisualizer.unity
     guid: ab7acf0d9677fbe4db51bc36647d4fcb
   - enabled: 0
-    path: Assets/Scenes/MainUIScene.unity
-    guid: 672f9338c997cb74ea1e235608dfee4a
+    path: Assets/Samples/Meta XR Core SDK/74.0.1/Sample Scenes/SimultaneousHandsAndControllers.unity
+    guid: 52478c233ce9df34087cc379c060a2d3
+  - enabled: 0
+    path: Assets/Samples/Meta XR Core SDK/74.0.1/Sample Scenes/VirtualKeyboard.unity
+    guid: c9684441ee1da1244a223118fdaa5d13
+  - enabled: 0
+    path: Assets/3rdParty/StandaloneFileBrowser/Sample/CanvasSampleScene.unity
+    guid: c0e4eec5741834194a946535d535405c
+  - enabled: 0
+    path: "Assets/Samples/Meta XR Interaction \u200BSDK/74.0.2/Example Scenes/RayExamples.unity"
+    guid: 1b2d3f90c0f50b94cb910c66c773d00d
+  - enabled: 0
+    path: Assets/Scenes/MainUISceneRemake.unity
+    guid: 7096d218ede113140aff96bdcc70b3a6
+  - enabled: 1
+    path: Assets/Scenes/Escena_mesa.unity
+    guid: 37b7c03868f1eb144aa0ddb4c66be987
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 376ee75ce620b0d48b973a7441de1cf0,
+      type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: fd0a8b92a7c23144ba689c2a7417077b,
       type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 84369966bfc0a8e479df2970674bf81d,
       type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: ea9e89ba19e78bb468bb260901779a52,
       type: 2}
+  m_UseUCBPForAssetBundles: 0

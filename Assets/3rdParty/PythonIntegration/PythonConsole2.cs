@@ -48,7 +48,7 @@ public class PythonConsole2 : MonoBehaviour {
 #if UNITY_EDITOR
         UnityEditor.Selection.activeObject = o;
 #else
-        m_scope.SetVariable ("selection", o);
+        //m_scope.SetVariable ("selection", o);
 #endif
     }
 

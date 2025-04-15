@@ -62,8 +62,11 @@ public class ReadSaveFilesWithBrowser : MonoBehaviour
     public string lastOpenedFolder = "";
     public string initPath = "";
     public string extension = "";
+    
+    [HideInInspector]
+    public string lastStructureName = "";
 
-    void loadFileFromPath(string path, bool readHetm) {
+    public void loadFileFromPath(string path, bool readHetm, string showType ="c") {
 
 #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         path = path.Replace("file:/", "");
@@ -72,13 +75,13 @@ public class ReadSaveFilesWithBrowser : MonoBehaviour
         {
 
             if (path.EndsWith(".xtc")) {
-                string lastStructureName = API.APIPython.last().uniqueName;
+                  lastStructureName = API.APIPython.last().uniqueName;
                 if (lastStructureName != null) {
                     API.APIPython.loadTraj(lastStructureName, path);
                 }
             }
             else if (path.EndsWith(".dx")) {
-                string lastStructureName = API.APIPython.last().uniqueName;
+                  lastStructureName = API.APIPython.last().uniqueName;
                 if (lastStructureName != null) {
                     API.APIPython.loadDXmap(lastStructureName, path);
                 }
@@ -89,8 +92,10 @@ public class ReadSaveFilesWithBrowser : MonoBehaviour
             else if (path.EndsWith(".itp")) {
                 //WARNING Not published yet
             }
-            else {
-                API.APIPython.load(path, readHetm);
+            else {                    
+                 
+                API.APIPython.load(path, readHetm, false, true, true, false, showType);
+                
             }
         }
     }

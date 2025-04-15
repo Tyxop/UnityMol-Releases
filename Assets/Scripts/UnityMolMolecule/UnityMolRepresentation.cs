@@ -238,9 +238,12 @@ public class UnityMolRepresentation {
 			sr.atomRepManager.Init(sr);
 			break;
 		case AtomType.optihb:
+			// Rompemos esto temporalmente
+			/*
 			sr.atomRep = new AtomRepresentationOptihb(sr.subSelection.structures[0].ToSelectionName(), sr.subSelection);
 			sr.atomRepManager = new UnityMolHBallMeshManager();
 			sr.atomRepManager.Init(sr);
+			*/
 			break;
 		case AtomType.bondorder:
 			sr.atomRep = new AtomRepresentationBondOrder(sr.subSelection.structures[0].ToSelectionName(), sr.subSelection);
@@ -301,9 +304,12 @@ public class UnityMolRepresentation {
 			sr.bondRepManager.Init(sr);
 			break;
 		case BondType.optihs:
+					// Cortamos esto temporalmente
+			/*
 			sr.bondRep = new BondRepresentationOptihs(sr.subSelection.structures[0].ToSelectionName(), sr.subSelection);
 			sr.bondRepManager = new UnityMolHStickMeshManager();
 			sr.bondRepManager.Init(sr);
+			*/
 			break;
 		case BondType.bondorder:
 			sr.bondRep = new BondRepresentationBondOrder(sr.subSelection.structures[0].ToSelectionName(), sr.subSelection);

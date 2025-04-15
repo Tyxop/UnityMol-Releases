@@ -91,13 +91,18 @@ public class APIPython : MonoBehaviour {
         pythonConsole.ExecuteCommand(command);
     }
 
+    // HACK :: esto es para si tocas algo se active
+    // el modelo correcto en la postura correcta
+    public static UnityMolStructure SenseStruct;
+            public static Vector3 CenterMoleculeOffset;
 
     /// <summary>
     /// Load a local molecular file (pdb/mmcif/gro/mol2/sdf/xyz formats)
     /// </summary>
-    public static UnityMolStructure load(string filePath, bool readHetm = true, bool forceDSSP = false, bool showDefaultRep = true, bool center = true, bool modelsAsTraj = true) {
+    public static UnityMolStructure load(string filePath, bool readHetm = true, bool forceDSSP = false, bool showDefaultRep = true, bool center = true, bool modelsAsTraj = true, string showtype="c") {
 
         UnityMolStructure newStruct = null;
+         
 
         Reader r = Reader.GuessReaderFrom(filePath);
         if (r != null) {
@@ -108,28 +113,65 @@ public class APIPython : MonoBehaviour {
                 string fileName = Path.GetFileName(filePath);
                 Debug.Log("Loaded PDB " + fileName + " with " + newStruct.models.Count + " models");
                 UnityMolSelection sel = newStruct.ToSelection();
-
+                
                 if (forceDSSP || !newStruct.ssInfoFromFile) {
                     DSSP.assignSS_DSSP(newStruct);
                 }
                 else {
                     Debug.Log("Using secondary structure definition from the file");
                 }
-
+                       
                 if (showDefaultRep)
                     defaultRep(sel.name);
-                if (center)
-                    centerOnStructure(newStruct.uniqueName, recordCommand: false);
+                
+                //APIPython.showSelection(sel.name,showtype);
+
+                //APIPython.showSelection(sel.name, "s"); 
+
+
+                if (showtype == "s")
+                {
+                    APIPython.colorByBfactor(sel.name, showtype, Color.red, Color.blue);
+                }
+                // type can be "cartoon", "c", "surface", "s", "hb", "line", "l", "hbond"
+
+                // Esto es para al animacion de las posiciones del ligando, 
+                if (showtype == "l")
+                {
+                    SenseStruct = newStruct;
+                    newStruct.createModelPlayer();
+                    //newStruct.modelsPlayer.play = true;
+                    //newStruct.modelsPlayer.looping = true;
+                    //newStruct.setModel(17);
+
+                    foreach (var item in newStruct.models)
+                    {
+
+                        GameObject punto = new GameObject();
+                        punto.name = item.name;
+                        punto.transform.SetParent(UnityMolMain.getRepresentationParent().transform);
+                        punto.transform.localPosition = item.centerOfGravity;
+                        SphereCollider sc = punto.AddComponent<SphereCollider>();
+                        sc.radius = 0.03f; // a ojo... por temas de escalas 1 es muy grande
+
+                    }
+                }
+                else {
+                    CenterMoleculeOffset = newStruct.currentModel.centerOfGravity;
+                }
+          
+
+                if (center) centerOnStructure(newStruct.uniqueName, recordCommand: false);
             }
             else {
                 Debug.LogError("Could not load file " + filePath);
             }
         }
-        UnityMolMain.recordPythonCommand("load(filePath=\"" + filePath.Replace("\\", "/") + "\", readHetm=" + cBoolToPy(readHetm) + ", forceDSSP=" +
+      /*  UnityMolMain.recordPythonCommand("load(filePath=\"" + filePath.Replace("\\", "/") + "\", readHetm=" + cBoolToPy(readHetm) + ", forceDSSP=" +
                                          cBoolToPy(forceDSSP) + ", showDefaultRep=" + cBoolToPy(showDefaultRep) + ", modelsAsTraj=" + cBoolToPy(modelsAsTraj) +
                                          ", center=" + cBoolToPy(center) + ")");
         UnityMolMain.recordUndoPythonCommand("delete(\"" + newStruct.uniqueName + "\")");
-
+      */
         return newStruct;
     }
 
@@ -212,6 +254,8 @@ public class APIPython : MonoBehaviour {
             r.modelsAsTraj = modelsAsTraj;
 
             newStruct = r.Fetch(PDBId, readHet: readHetm);
+            
+              //newStruct = r.FetchAsync2(PDBId, readHet: readHetm);
         }
 
         UnityMolSelection sel = newStruct.ToSelection();
@@ -615,6 +659,7 @@ public class APIPython : MonoBehaviour {
         try {
             s.readTrajectoryXDR(path);
             s.createTrajectoryPlayer();
+            s.trajPlayer.play = false;// Hack :: lo ponemos en pausa al inicio para no desvelar la magia
         }
         catch (System.Exception e) {
             Debug.LogError("Could not load trajectory file '" + path + "'");
@@ -948,6 +993,7 @@ public class APIPython : MonoBehaviour {
 
             RepType repType = getRepType("c");
             RepType repTypehb = getRepType("hb");
+            RepType repTypeL = getRepType("l");
 
             repManager.AddRepresentation(sel, repType.atomType, repType.bondType);
 
@@ -977,14 +1023,21 @@ public class APIPython : MonoBehaviour {
                 MDAnalysisSelection selec = new MDAnalysisSelection("not protein", sel.atoms);
                 UnityMolSelection ret = selec.process();
                 ret.name = notPSelName;
-
+                
                 if (ret.Count != 0) {
                     if (!cartoonEmpty) { //Show not protein as hb only if the cartoon was successfully shown
-                        repManager.AddRepresentation(ret, repTypehb.atomType, repTypehb.bondType);
+                        //repManager.AddRepresentation(ret, repTypehb.atomType, repTypehb.bondType);
+                        repManager.AddRepresentation(ret, repTypeL.atomType, repTypeL.bondType);
                     }
-
+                     
                     selM.Add(ret);
                     selM.AddSelectionKeyword(ret.name, ret.name);
+
+                    // Hack :: separamose el ligando lo ocultamos para poder enseñarlo si se llega a poner el objeto
+                    // en el sitio correcto
+                    hideSelection(ret.name, "l");
+                    Debug.Log("hide->" + ret.name);
+
                 }
 
 

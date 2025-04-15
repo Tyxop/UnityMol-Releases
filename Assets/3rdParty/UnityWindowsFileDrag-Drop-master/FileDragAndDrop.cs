@@ -7,7 +7,7 @@ using B83.Win32;
 public class FileDragAndDrop : MonoBehaviour
 {
 
-    #if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN
     // important to keep the instance alive while the hook is active.
     UnityDragAndDropHook hook;
     void OnEnable ()
@@ -64,5 +64,6 @@ public class FileDragAndDrop : MonoBehaviour
             }
         }
     }
+    
     #endif
 }

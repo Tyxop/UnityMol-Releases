@@ -1,5 +1,9 @@
 ﻿//using UnityEngine;
+
+#if !UNITY_ANDROID
 using IronPython.Hosting;
+#endif
+
 using Microsoft.Scripting.Hosting;
 using System.Reflection;
 
@@ -22,13 +26,18 @@ public static class PythonUtils {
 
 	static ScriptEngine m_engine;
 	public static ScriptEngine GetEngine(){
+
 		if (m_engine == null) {
+	#if !UNITY_ANDROID
 			m_engine = Python.CreateEngine ();
 			foreach (var type in c_mustHaveTypes) {
 				m_engine.Runtime.LoadAssembly (type.Assembly);
 			}
+	#endif
 		}
+
 		return m_engine;
+
 	}
 
 

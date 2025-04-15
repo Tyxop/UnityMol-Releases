@@ -50,6 +50,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -346,65 +347,68 @@ public class ManipulationManager : MonoBehaviour {
             }
             UnityMolMain.getCustomRaycast().needsUpdatePos = true;
         }
-        if(curUIInput == null && Input.GetButton("RotationXLeft")){
-            foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
-                Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
-                t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), loadedMolPar.right, speedX);
+            /*
+            if(curUIInput == null && Input.GetButton("RotationXLeft")){
+                foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
+                    Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
+                    t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), loadedMolPar.right, speedX);
+                }
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
             }
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
-        if(curUIInput == null && Input.GetButton("RotationXRight")){
-            foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
-                Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
-                t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), -loadedMolPar.right, speedX);
+            if(curUIInput == null && Input.GetButton("RotationXRight")){
+                foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
+                    Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
+                    t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), -loadedMolPar.right, speedX);
+                }
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
             }
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
-        if(curUIInput == null && Input.GetButton("RotationYLeft")){
-            foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
-                Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
-                t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), loadedMolPar.up, speedY);
+            if(curUIInput == null && Input.GetButton("RotationYLeft")){
+                foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
+                    Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
+                    t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), loadedMolPar.up, speedY);
+                }
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
             }
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
-        if(curUIInput == null && Input.GetButton("RotationYRight")){
-            foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
-                Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
-                t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), -loadedMolPar.up, speedY);
+            if(curUIInput == null && Input.GetButton("RotationYRight")){
+                foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
+                    Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
+                    t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), -loadedMolPar.up, speedY);
+                }
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
             }
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
-        if(curUIInput == null && Input.GetButton("RotationZLeft")){
-            foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
-                Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
-                t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), loadedMolPar.forward, speedZ);
+            if(curUIInput == null && Input.GetButton("RotationZLeft")){
+                foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
+                    Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
+                    t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), loadedMolPar.forward, speedZ);
+                }
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
             }
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
-        if(curUIInput == null && Input.GetButton("RotationZRight")){
-            foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
-                Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
-                t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), -loadedMolPar.forward, speedZ);
+            if(curUIInput == null && Input.GetButton("RotationZRight")){
+                foreach (UnityMolStructure s in UnityMolMain.getStructureManager().loadedStructures) {
+                    Transform t = UnityMolMain.getStructureManager().structureToGameObject[s.uniqueName].transform;
+                    t.RotateAround(t.TransformPoint(s.currentModel.centerOfGravity), -loadedMolPar.forward, speedZ);
+                }
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
             }
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
 
-        if(curUIInput == null && Input.GetButton("ZoomIn")){
-            Vector3 pos = currentTransform.position;
-            float val = moveSpeed * 0.1f;
-            pos.z += val;
-            currentTransform.position = pos;
-            currentCenterPosition.z += val;
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
-        if(curUIInput == null && Input.GetButton("ZoomOut")){
-            Vector3 pos = currentTransform.position;
-            float val = moveSpeed * 0.1f;
-            pos.z -= val;
-            currentTransform.position = pos;
-            currentCenterPosition.z -= val;
-            UnityMolMain.getCustomRaycast().needsUpdatePos = true;
-        }
+
+            if(curUIInput == null && Input.GetButton("ZoomIn")){
+                Vector3 pos = currentTransform.position;
+                float val = moveSpeed * 0.1f;
+                pos.z += val;
+                currentTransform.position = pos;
+                currentCenterPosition.z += val;
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
+            }
+            if(curUIInput == null && Input.GetButton("ZoomOut")){
+                Vector3 pos = currentTransform.position;
+                float val = moveSpeed * 0.1f;
+                pos.z -= val;
+                currentTransform.position = pos;
+                currentCenterPosition.z -= val;
+                UnityMolMain.getCustomRaycast().needsUpdatePos = true;
+            }
+            */
 
         if (disableMouseInVR && UnityMolMain.inVR()) {
             return;
@@ -415,33 +419,52 @@ public class ManipulationManager : MonoBehaviour {
         if (currentTransform == null)
             return;
 
-        if (Input.GetMouseButton(0) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
+            //if (Input.GetMouseButton(0) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+        if (Mouse.current.leftButton.wasPressedThisFrame  && !(Keyboard.current.leftCtrlKey.wasPressedThisFrame ||  Keyboard.current.rightCtrlKey.wasPressedThisFrame)) 
+        {     
             if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
                 if (mouseSel == null || !mouseSel.duringIMD) {
-                    currentTransform.RotateAround(currentCenterPosition, Vector3.up, -Input.GetAxis("Mouse X")*moveSpeed);
-                    currentTransform.RotateAround(currentCenterPosition, Vector3.right, Input.GetAxis("Mouse Y")*moveSpeed);
+                    currentTransform.RotateAround(currentCenterPosition, Vector3.up, -Mouse.current.delta.x.ReadValue() * moveSpeed);
+                    currentTransform.RotateAround(currentCenterPosition, Vector3.right, Mouse.current.delta.y.ReadValue() * moveSpeed);
                     UnityMolMain.getCustomRaycast().needsUpdatePos = true;
                 }
             }
         }
-        if (Input.GetMouseButton(1) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
+        //if (Input.GetMouseButton(1) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
+        if (Mouse.current.rightButton.wasPressedThisFrame && !(Keyboard.current.leftCtrlKey.wasPressedThisFrame || Keyboard.current.rightCtrlKey.wasPressedThisFrame)) 
+        {
             Vector3 pos = currentTransform.position;
-            float val = -Input.GetAxis("Mouse Y") * moveSpeed * 0.5f;
+           //float val = -Input.GetAxis("Mouse Y") * moveSpeed * 0.5f; // Old input system      
+            float val = -Mouse.current.delta.y.ReadValue() * moveSpeed * 0.5f;
+                
             pos.z += val;
             currentTransform.position = pos;
             currentCenterPosition.z += val;
             UnityMolMain.getCustomRaycast().needsUpdatePos = true;
         }
-        if (Input.GetMouseButton(2) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
-            currentTransform.Translate(Vector3.up * Input.GetAxis("Mouse Y")*moveSpeed * 0.05f, Space.World);
-            currentTransform.Translate(Vector3.right * Input.GetAxis("Mouse X")*moveSpeed * 0.05f, Space.World);
-            currentCenterPosition.x += Input.GetAxis("Mouse X") * moveSpeed * 0.05f;
-            currentCenterPosition.y += Input.GetAxis("Mouse Y") * moveSpeed * 0.05f;
+
+            //if (Input.GetMouseButton(2) && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
+        if (Mouse.current.leftButton.wasPressedThisFrame && !(Keyboard.current.leftCtrlKey.wasPressedThisFrame || Keyboard.current.rightCtrlKey.wasPressedThisFrame))
+        {
+            /*
+                currentTransform.Translate(Vector3.up * Input.GetAxis("Mouse Y")*moveSpeed * 0.05f, Space.World);
+                currentTransform.Translate(Vector3.right * Input.GetAxis("Mouse X")*moveSpeed * 0.05f, Space.World);
+                currentCenterPosition.x += Input.GetAxis("Mouse X") * moveSpeed * 0.05f;
+                currentCenterPosition.y += Input.GetAxis("Mouse Y") * moveSpeed * 0.05f;
+            */
+
+            currentTransform.Translate(Vector3.up * Mouse.current.delta.y.ReadValue() * moveSpeed * 0.05f, Space.World);
+            currentTransform.Translate(Vector3.right * Mouse.current.delta.x.ReadValue() * moveSpeed * 0.05f, Space.World);
+            currentCenterPosition.x += Mouse.current.delta.x.ReadValue() * moveSpeed * 0.05f;
+            currentCenterPosition.y += Mouse.current.delta.y.ReadValue() * moveSpeed * 0.05f;
+
             UnityMolMain.getCustomRaycast().needsUpdatePos = true;
         }
 
-        float scroll = -Input.GetAxis("Mouse ScrollWheel") * scrollSpeed;
-        if (scroll != 0.0f && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+            //float scroll = -Input.GetAxis("Mouse ScrollWheel") * scrollSpeed;
+            float scroll = -Mouse.current.scroll.ReadValue().y * scrollSpeed;
+
+            if (scroll != 0.0f && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
             Vector3 pos = currentTransform.position;
             pos.z += scroll * moveSpeed;
             currentTransform.position = pos;
@@ -449,7 +472,9 @@ public class ManipulationManager : MonoBehaviour {
             UnityMolMain.getCustomRaycast().needsUpdatePos = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.R)) {
+        //if (Input.GetKeyDown(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.R)) {
+        if (Keyboard.current.leftAltKey.wasPressedThisFrame && Keyboard.current.rKey.wasPressedThisFrame)
+        {
             resetPosition();
             resetRotation();
         }

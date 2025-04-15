@@ -64,35 +64,37 @@ public class PopUpSystem : MonoBehaviour {
     /// <param name="type">Type of message (error, exception, warning, assert).</param>
     void HandleLog (string message, string stackTrace, LogType type)
     {
-        logs.Add(new Log() {
-            message = message,
-            stackTrace = stackTrace,
-            type = type,
-        });
 
-        if (notificationPanelTransform != null && notificationButtonPrefab != null) {
-            GameObject notif = GameObject.Instantiate(notificationButtonPrefab, notificationPanelTransform);
-            // notif.transform.SetParent(notificationPanelTransform, false);
-            notif.transform.Find("Text").gameObject.GetComponent<Text>().text = message;
-            Image logo = notif.transform.Find("Image").gameObject.GetComponent<Image>();
-            switch (type) {
-            case LogType.Error:
-            case LogType.Exception:
-                logo.color = errorColor;
-                break;
-            case LogType.Warning:
-                logo.color = warningColor;
-                break;
-            case LogType.Log:
-                logo.color = logColor;
-                break;
-            default:
-                logo.color = Color.black;
-                break;
+        if (type == LogType.Error) { 
+            logs.Add(new Log() {
+                message = message,
+                stackTrace = stackTrace,
+                type = type,
+            });
+
+            if (notificationPanelTransform != null && notificationButtonPrefab != null) {
+                GameObject notif = GameObject.Instantiate(notificationButtonPrefab, notificationPanelTransform);
+                // notif.transform.SetParent(notificationPanelTransform, false);
+                notif.transform.Find("Text").gameObject.GetComponent<Text>().text = message;
+                Image logo = notif.transform.Find("Image").gameObject.GetComponent<Image>();
+                switch (type) {
+                case LogType.Error:
+                case LogType.Exception:
+                    logo.color = errorColor;
+                    break;
+                case LogType.Warning:
+                    logo.color = warningColor;
+                    break;
+                case LogType.Log:
+                    logo.color = logColor;
+                    break;
+                default:
+                    logo.color = Color.black;
+                    break;
+                }
+                notificationQueue.Enqueue(notif);
             }
-            notificationQueue.Enqueue(notif);
         }
-
     }
 
 

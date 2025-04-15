@@ -71,6 +71,9 @@ using System.Text;
 using System.Net;
 using System.Globalization;
 
+using UnityEngine.Networking;
+using System.Threading.Tasks;
+
 namespace UMol {
 
 /// <summary>
@@ -82,7 +85,7 @@ public class PDBReader: Reader {
 
     // private string PDBServer = "http://files.rcsb.org/download/";
     //The pdb files are recorded as .../all/pdb/pdb1kx2.ent.gz
-    private string PDBServer = "https://ftp.wwpdb.org/pub/pdb/data/structures/all/pdb/pdb";
+    private string PDBServer = "https://files.wwpdb.org/pub/pdb/data/structures/all/pdb/pdb";
 
     public PDBReader(string fileName = "", string PDBServer = ""): base(fileName)
     {
@@ -164,12 +167,51 @@ public class PDBReader: Reader {
 
     }
 
+        async void FetchAsync(string EntryCode, bool readHet = true, bool readWater = true)
+        {
+            
+            string extension = ".ent.gz";
+            string EntryCodeLow = EntryCode.ToLower();
 
-    /// <summary>
-    /// Parses a PDB file to a UnityMolStructure object
-    /// ignoreStructureM flag is used to avoid adding the structure into managers and just returns a UnityMolStructure
-    /// </summary>
-    protected override UnityMolStructure ReadData(StreamReader sr, bool readHET, bool readWater, bool ignoreStructureM = false) {
+
+            string entryURL = PDBServer + EntryCodeLow + extension;
+            this.fileName = EntryCode + extension;
+            updateFileNames();
+            Debug.Log("Fetching remote file: " + entryURL);
+
+
+            byte[] result = await GetRequest(entryURL);
+
+
+            Debug.Log(result);
+        }
+
+        async Task<byte[]> GetRequest(string uri)
+        {
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+            {
+                var operation = webRequest.SendWebRequest();
+
+                while (!operation.isDone)
+                    await Task.Yield();
+
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError ||
+                    webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError("Error: " + webRequest.error);
+                    return null;
+                }
+
+                return webRequest.downloadHandler.data;
+            }
+        }
+
+
+        /// <summary>
+        /// Parses a PDB file to a UnityMolStructure object
+        /// ignoreStructureM flag is used to avoid adding the structure into managers and just returns a UnityMolStructure
+        /// </summary>
+        protected override UnityMolStructure ReadData(StreamReader sr, bool readHET, bool readWater, bool ignoreStructureM = false) {
         float start = Time.realtimeSinceStartup;
 
         // When parsing PDBs it makes sense to filter/parse data line by line

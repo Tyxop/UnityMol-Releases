@@ -55,8 +55,8 @@ using System.Linq;
 namespace UMol {
 public class RibbonMesh {
 
-	public static int splineSteps = 16;
-	public static int profileDetail = 8;
+		public static int splineSteps = 4;//16;
+		public static int profileDetail = 4;//8;
 
 	public static int trajSplineSteps = 4;
 	public static int trajProfileDetail = 4;

@@ -49,12 +49,16 @@
 
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+ 
+
+ 
 
 //using VRTK;
 
@@ -67,6 +71,7 @@ public class ParsingException: Exception {
     public ParsingException(string message, Exception inner)
     : base(message, inner) {}
 }
+
 
 
 
@@ -117,10 +122,46 @@ public abstract class Reader {
         }
     }
 
-    /// <summary>
-    /// Reads a file from local HDD and parses the data
-    /// </summary>
-    public UnityMolStructure Read(bool readHet = true, bool readWater = true, bool justParse = false) {
+        /* ------------------------------------------------------------------------ */
+        /* ------------------------------------------------------------------------  
+        public void LoadFileAsync(string filePath)
+        {
+            StartCoroutine(LoadFileCoroutine(filePath));
+        }
+
+        private IEnumerator LoadFileCoroutine(string filePath)
+        {
+            // Iniciamos la lectura del archivo de forma asíncrona
+            FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            byte[] data = new byte[fileStream.Length];
+
+            AsyncCallback callback = null;
+            IAsyncResult result = fileStream.BeginRead(data, 0, data.Length, callback, null);
+
+            // Esperamos a que la lectura se complete
+            while (!result.IsCompleted)
+            {
+                yield return null; // Cedemos el control al siguiente frame
+            }
+
+            // Finalizamos la lectura
+            int bytesRead = fileStream.EndRead(result);
+            fileStream.Close();
+
+            // Aquí puedes procesar los datos cargados
+            Debug.Log($"Archivo cargado: {bytesRead} bytes leídos");
+
+            
+        }
+
+          ------------------------------------------------------------------------ */
+        /* ------------------------------------------------------------------------ */
+
+        /// <summary>
+        /// Reads a file from local HDD and parses the data
+        /// </summary>
+        public UnityMolStructure Read(bool readHet = true, bool readWater = true, bool justParse = false) {
+
         UnityMolStructure structure = null;
 
         StreamReader sr;
@@ -134,7 +175,7 @@ public abstract class Reader {
             if (Application.platform == RuntimePlatform.Android)
             {
                 Stream textStream;
-                textStream = new StringReaderStream(AndroidUtils.GetFileText(fileName));
+                textStream = new StringReaderStream(LoadTextFileAsync(fileName));
                 sr = new StreamReader(textStream);
             }
             else
@@ -160,11 +201,98 @@ public abstract class Reader {
 
         return structure;
     }
+         
+        private string result = "";
 
-    /// <summary>
-    /// Reads a file from string and parses the data
-    /// </summary>
-    public UnityMolStructure ReadFromString(string content, bool readHet = true, bool readWater = true) {
+        public string LoadTextFileAsync(string file)
+        {
+            // Para Android, usamos la clase WWW (obsoleta pero funcional sin coroutines)
+            // o podemos usar UnityWebRequest con await
+            using (UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(file))
+            {
+                var operation = www.SendWebRequest();
+
+                // Esperar a que termine la operación sin usar coroutines
+                while (!operation.isDone)
+                {
+                      
+                }
+
+                if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+                {
+                    result = www.downloadHandler.text;
+                    Debug.Log(result);
+                }
+                else
+                {
+                    result = null;
+                }
+            }
+            
+
+            return result;
+
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// Reads a file from local HDD and parses the data
+        /// </summary>
+        public UnityMolStructure ReadAsync(bool readHet = true, bool readWater = true, bool justParse = false)
+        {
+
+            UnityMolStructure structure = null;
+
+            StreamReader sr;
+            //Detect compressed files
+            if (fileName.ToLower().EndsWith("gz"))
+            {
+                GZipStream flatStream = new GZipStream(File.OpenRead(fileName), CompressionMode.Decompress);
+                sr = new StreamReader(flatStream);
+            }
+            else
+            {
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    Stream textStream;
+                    textStream = new StringReaderStream(AndroidUtils.GetFileText(fileName));
+                    sr = new StreamReader(textStream);
+                }
+                else
+                {
+                    FileInfo LocalFile = new FileInfo(fileName);
+                    if (!LocalFile.Exists)
+                    {
+                        throw new FileNotFoundException("File not found: " + fileName);
+                    }
+                    sr = new StreamReader(fileName);
+                }
+            }
+
+            using (sr)
+            {
+                try
+                {
+                    structure = ReadData(sr, readHet, readWater, justParse);
+                }
+                catch (Exception err)
+                {
+                    Debug.LogError("Something went wrong when parsing your file: " + err);
+                    throw err;
+                }
+            }
+
+            return structure;
+        }
+
+        /// <summary>
+        /// Reads a file from string and parses the data
+        /// </summary>
+        public UnityMolStructure ReadFromString(string content, bool readHet = true, bool readWater = true) {
         UnityMolStructure structure = null;
 
         byte[] bytes = Encoding.UTF8.GetBytes(content);
@@ -235,7 +363,19 @@ public abstract class Reader {
 
         GameObject loadedMolGO = UnityMolMain.getRepresentationParent();
 
-       
+            // NEW  Experiment
+            /*Rigidbody rig = loadedMolGO.AddComponent<Rigidbody>();
+            rig.useGravity = false;
+            rig.isKinematic = true;
+            
+            Grabbable grab = loadedMolGO.AddComponent<Grabbable>();
+            grab.InjectOptionalRigidbody(rig);
+
+            HandGrabInteractable hgrab = loadedMolGO.AddComponent<HandGrabInteractable>();
+            hgrab.InjectRigidbody(rig);
+            GrabInteractable grabI = loadedMolGO.AddComponent<GrabInteractable>();
+            grabI.InjectRigidbody(rig);
+       */
 
         Transform repParent = loadedMolGO.transform.Find(sel.name);
         
@@ -282,6 +422,11 @@ public abstract class Reader {
             curA.transform.parent = collidersT.transform;
             curA.transform.localPosition = a.position;
             curA.transform.localScale = Vector3.one;
+                // NEW Add eperimento put spherical colliders
+                SphereCollider spColl =  curA.AddComponent<SphereCollider>();
+                spColl.radius = 2.0f;
+                
+                /// ----------------------------------------
             atomToGo[a] = curA;
         }
         if (sel.structures[0].atomToGo == null || sel.structures[0].atomToGo.Count == 0) {
@@ -296,6 +441,9 @@ public abstract class Reader {
         collidersT.transform.localPosition = Vector3.zero;
         collidersT.transform.localRotation = Quaternion.identity;
         collidersT.transform.localScale = Vector3.one;
+
+          
+
 
     }
     public static SurfaceThread startSurfaceThread(UnityMolSelection sel) {
