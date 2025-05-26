@@ -307,7 +307,9 @@ public class BondRepresentationLine : BondRepresentation {
         MeshFilter mf = currentGO.AddComponent<MeshFilter>();
         mf.mesh = curMesh;
         MeshRenderer mr = currentGO.AddComponent<MeshRenderer>();
-        mr.material = new Material(Shader.Find("Unlit/SurfaceVertexColorNotCull"));
+        //mr.material = new Material(Shader.Find("Unlit/SurfaceVertexColorNotCull"));
+        mr.material = new Material(Shader.Find("Vertex Colored"));
+            
         mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         mr.receiveShadows = false;
         meshGO = currentGO;

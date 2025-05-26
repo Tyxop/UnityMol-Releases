@@ -54,6 +54,9 @@ using System.Globalization;
 using System;
 using System.IO;
 using System.Linq;
+using Oculus.Interaction;
+using Microsoft.Scripting.Debugging;
+
 
 /// <summary>
 /// Defines all the functions available from the console
@@ -124,43 +127,7 @@ public class APIPython : MonoBehaviour {
                 if (showDefaultRep)
                     defaultRep(sel.name);
                 
-                //APIPython.showSelection(sel.name,showtype);
-
-                //APIPython.showSelection(sel.name, "s"); 
-
-
-                if (showtype == "s")
-                {
-                    APIPython.colorByBfactor(sel.name, showtype, Color.red, Color.blue);
-                }
-                // type can be "cartoon", "c", "surface", "s", "hb", "line", "l", "hbond"
-
-                // Esto es para al animacion de las posiciones del ligando, 
-                if (showtype == "l")
-                {
-                    SenseStruct = newStruct;
-                    newStruct.createModelPlayer();
-                    //newStruct.modelsPlayer.play = true;
-                    //newStruct.modelsPlayer.looping = true;
-                    //newStruct.setModel(17);
-
-                    foreach (var item in newStruct.models)
-                    {
-
-                        GameObject punto = new GameObject();
-                        punto.name = item.name;
-                        punto.transform.SetParent(UnityMolMain.getRepresentationParent().transform);
-                        punto.transform.localPosition = item.centerOfGravity;
-                        SphereCollider sc = punto.AddComponent<SphereCollider>();
-                        sc.radius = 0.03f; // a ojo... por temas de escalas 1 es muy grande
-
-                    }
-                }
-                else {
-                    CenterMoleculeOffset = newStruct.currentModel.centerOfGravity;
-                }
-          
-
+                 
                 if (center) centerOnStructure(newStruct.uniqueName, recordCommand: false);
             }
             else {
@@ -175,9 +142,202 @@ public class APIPython : MonoBehaviour {
         return newStruct;
     }
 
-    /// <summary>
-    /// Load a molecular file (pdb/mmcif/gro/mol2/sdf/xyz formats) from a string
-    /// </summary>
+    private static UnityMolStructure MoleculeStruct; // la molecula principal
+    private static UnityMolSelection MoleculeSelection; // La seleccion de la molecula.
+    public static ReposudoeManager repo;
+    public static GameObject StructureAnimation = null;  
+
+    public static UnityMolStructure load_reposudoe(string filePath, bool readHetm = true, bool forceDSSP = false,
+        bool showDefaultRep = true, bool center = true, bool modelsAsTraj = true, string showtype = "c", string paso = "molecula")
+    {
+
+        UnityMolStructure newStruct = null;
+
+
+        Reader r = Reader.GuessReaderFrom(filePath);
+        if (r != null)
+        {
+            r.modelsAsTraj = modelsAsTraj;
+            newStruct = r.Read(readHet: readHetm);
+
+            if (newStruct != null)
+            {
+                string fileName = Path.GetFileName(filePath);
+                Debug.Log("Loaded PDB " + fileName + " with " + newStruct.models.Count + " models");
+                UnityMolSelection sel = newStruct.ToSelection();
+
+                if (forceDSSP || !newStruct.ssInfoFromFile)
+                {
+                    DSSP.assignSS_DSSP(newStruct);
+                }
+                else
+                {
+                    Debug.Log("Using secondary structure definition from the file");
+                }
+
+                if (showDefaultRep)
+                     defaultRep(sel.name);
+
+                if (paso == "ligando")
+                {
+                    GameObject hookObj =  GameObject.FindGameObjectWithTag("Hook");
+                    GameObject ligandohookObj = GameObject.Find("LigandoHook");
+                    APIPython.showSelection(sel.name, "l");
+                    APIPython.colorSelection(sel.name, "l", new Color(218f/256f,255f/256f,54f/256f));
+                            
+                    GameObject loadedMolGO = GameObject.Find("LoadedMolecules");
+                    GameObject structureParent = loadedMolGO.transform.Find(sel.name).gameObject;
+                    Debug.LogWarning("--->> "+ sel.name);
+                          
+                    int layerCollision = LayerMask.NameToLayer("contact");
+                    structureParent.layer = layerCollision;
+                    SphereCollider sc = structureParent.AddComponent<SphereCollider>();      
+                    sc.isTrigger = false;
+                    sc.radius = 3f;
+
+                    structureParent.transform.SetParent(ligandohookObj.transform);
+                    structureParent.transform.position = Vector3.zero;
+                    structureParent.transform.localPosition = Vector3.zero;
+                             
+                }
+
+                if (paso == "animation")
+                {
+                    APIPython.showSelection(sel.name, "c");
+                    GameObject loadedMolGO = GameObject.Find("LoadedMolecules");
+                    GameObject structureParent = loadedMolGO.transform.Find(sel.name).gameObject;
+                    APIPython.hideSelection(sel.name, "c");
+                    StructureAnimation = structureParent;
+                    structureParent.transform.Find("Colliders").gameObject.SetActive(false); // los apago para el rendimiento
+                    structureParent.SetActive(false); // Lo apago para que no se vea en la escena
+
+
+                    Debug.LogError("Animator sel name " + sel.name);
+
+                }
+
+                if (paso == "molecule")
+                {
+                    //APIPython.showSelection(sel.name,showtype);
+                    //APIPython.showSelection(sel.name, "s"); 
+
+                    // Prueba de seleccion por lenguaje MD
+                    //UnityMolSelection mm = APIPython.select("ss helix", "myLigandSel");
+                    //UnityMolSelection mm = APIPython.select("resid 1", "myLigandSel");                            
+                    //APIPython.annotateAtomText(newStruct.name, unchecked((int)mm.atoms[0].number), "dd");
+                    //APIPython.showSelection("myLigandSel", "l");
+
+                    // List<UnityMolAtom> kk = mm.atoms;
+                    // foreach (var item in kk)
+                    //{
+                    //  item.ToSelection()
+                    // }
+
+
+                    //APIPython.showSelection("myLigandSel", "s");
+                    //setTransparentSurface("myLigandSel", 0.05f);
+
+                    // Coloreamos el modelo
+                    APIPython.colorByBfactor(sel.name, showtype, Color.red, Color.blue);
+                    // Centramos el modelo.
+                    GameObject loadedMolGO = GameObject.Find("LoadedMolecules");
+                    GameObject structureParent = loadedMolGO.transform.Find(sel.name).gameObject;
+                    
+                    // Apagamos los colliders
+                    GameObject Colliders = structureParent.transform.Find("Colliders").gameObject;
+                    Colliders.SetActive(false);
+
+                    structureParent.transform.Translate(-newStruct.currentModel.centerOfGravity,Space.World);
+
+                    MoleculeStruct = newStruct;
+                    MoleculeSelection = sel;
+
+                }
+
+                // type can be "cartoon", "c", "surface", "s", "hb", "line", "l", "hbond"
+
+                // Esto es para al animacion de las posiciones del ligando, 
+                if (paso=="pos")
+                {
+                    APIPython.showSelection(sel.name, "l");
+                   
+                    GameObject loadedMolGO = GameObject.Find("LoadedMolecules");
+                    GameObject structureParent = loadedMolGO.transform.Find(sel.name).gameObject;
+                    GameObject Colliders = structureParent.transform.Find("Colliders").gameObject;
+                    Colliders.SetActive(false);
+                    repo = GameObject.Find("RepoSudoe").GetComponent<ReposudoeManager>();
+                    repo.PosicionesAll = structureParent;
+
+                    Debug.LogWarning("---pos-> " + sel.name);
+
+                    SenseStruct = newStruct;
+                    newStruct.createModelPlayer();
+                    // newStruct.modelsPlayer.play = true;
+                    // newStruct.modelsPlayer.looping = true;
+                     newStruct.setModel(1);
+                     
+
+
+                    int layerCollision = LayerMask.NameToLayer("contact");
+                    foreach (var item in newStruct.models)
+                    {
+
+                        GameObject punto = new GameObject();
+                       if (int.Parse(item.name) == 0) {
+                          GameObject resalte = GameObject.CreatePrimitive(PrimitiveType.Sphere);     
+                          resalte.GetComponent<SphereCollider>().enabled = false; 
+                          resalte.transform.localScale = Vector3.one/100f;
+                          resalte.transform.SetParent(punto.transform);
+
+                       }
+                        punto.name = item.name;
+                        punto.layer = layerCollision;
+                        punto.transform.SetParent(structureParent.transform);
+                        punto.transform.localPosition = item.centerOfGravity*structureParent.transform.localScale.x;
+                        SphereCollider sc = punto.AddComponent<SphereCollider>();
+                        Contact Contacto = punto.AddComponent<Contact>();
+                        Contacto.numFrame = int.Parse(item.name);
+                        Contacto.structure = newStruct;
+                        Contacto.MoleculeStructure = MoleculeStruct;
+                        Contacto.reposudoeManager = repo;   
+                        Contacto.sel = sel;
+                        Contacto.moleculeSel= MoleculeSelection;
+
+                        sc.isTrigger = true;
+                        sc.radius = 0.03f; // a ojo... por temas de escalas 1 es muy grande
+                        if (Contacto.numFrame == 0) {
+                            sc.radius = 0.08f;                            
+                        }
+                    }
+
+                    hideSelection(sel.name); 
+
+                }
+                
+
+                CenterMoleculeOffset = newStruct.currentModel.centerOfGravity;
+
+                Debug.LogWarning("CenterMoleculeOffset --> " + CenterMoleculeOffset);
+                //if (center) 
+                //centerOnStructure(newStruct.uniqueName, recordCommand: false);
+            }
+            else
+            {
+                Debug.LogError("Could not load file " + filePath);
+            }
+        }
+        /*  UnityMolMain.recordPythonCommand("load(filePath=\"" + filePath.Replace("\\", "/") + "\", readHetm=" + cBoolToPy(readHetm) + ", forceDSSP=" +
+                                            cBoolToPy(forceDSSP) + ", showDefaultRep=" + cBoolToPy(showDefaultRep) + ", modelsAsTraj=" + cBoolToPy(modelsAsTraj) +
+                                            ", center=" + cBoolToPy(center) + ")");
+            UnityMolMain.recordUndoPythonCommand("delete(\"" + newStruct.uniqueName + "\")");
+        */
+        return newStruct;
+    }
+
+
+            /// <summary>
+            /// Load a molecular file (pdb/mmcif/gro/mol2/sdf/xyz formats) from a string
+            /// </summary>
     public static UnityMolStructure loadFromString(string fileName, string fileContent, bool readHetm = true, bool forceDSSP = false, bool showDefaultRep = true, bool center = true, bool modelsAsTraj = true) {
 
         UnityMolStructure newStruct = null;
@@ -222,7 +382,6 @@ public class APIPython : MonoBehaviour {
                                                  cBoolToPy(forceDSSP) + ", showDefaultRep=" + cBoolToPy(showDefaultRep) +
                                                  ", center=" + cBoolToPy(center) + ", modelsAsTraj=" + cBoolToPy(modelsAsTraj) + ")");
                 UnityMolMain.recordUndoPythonCommand("delete(\"" + newStruct.uniqueName + "\")");
-
             }
         }
         finally
@@ -646,20 +805,25 @@ public class APIPython : MonoBehaviour {
     /// It creates a XDRFileReader in the corresponding UnityMolStructure and a TrajectoryPlayer
     /// </summary>
     public static void loadTraj(string structureName, string path) {
-
+       
+        
         UnityMolStructureManager sm = UnityMolMain.getStructureManager();
+        
+        Debug.LogError("loadTraj -> " + sm.loadedStructures.Count);
 
         if (sm.loadedStructures.Count == 0) {
             Debug.LogWarning("No molecule loaded");
             return;
         }
 
+        Debug.LogError("Load traj structure name" + structureName);
+
         UnityMolStructure s = sm.GetStructure(structureName);
 
         try {
             s.readTrajectoryXDR(path);
-            s.createTrajectoryPlayer();
-            s.trajPlayer.play = false;// Hack :: lo ponemos en pausa al inicio para no desvelar la magia
+            s.createTrajectoryPlayer(); // Esto lo hace el readTrajectoryXDR
+            s.trajPlayer.play = true;// Hack :: lo ponemos en pausa al inicio para no desvelar la magia
         }
         catch (System.Exception e) {
             Debug.LogError("Could not load trajectory file '" + path + "'");
@@ -1033,7 +1197,7 @@ public class APIPython : MonoBehaviour {
                     selM.Add(ret);
                     selM.AddSelectionKeyword(ret.name, ret.name);
 
-                    // Hack :: separamose el ligando lo ocultamos para poder enseñarlo si se llega a poner el objeto
+                    // Hack :: separamose el ligando lo ocultamos para poder enseï¿½arlo si se llega a poner el objeto
                     // en el sitio correcto
                     hideSelection(ret.name, "l");
                     Debug.Log("hide->" + ret.name);
@@ -3297,9 +3461,9 @@ public class APIPython : MonoBehaviour {
         selM.selections[name] = sumSel;
 
 #if !DISABLE_HIGHLIGHT
-        UnityMolHighlightManager hM = UnityMolMain.getHighlightManager();
+       /* UnityMolHighlightManager hM = UnityMolMain.getHighlightManager();
         hM.Clean();
-        hM.HighlightAtoms(sumSel);
+        hM.HighlightAtoms(sumSel);*/
 #endif
 
         UnityMolMain.recordPythonCommand("addToSelection(\"" + selMDA + "\", \"" + name + "\", " + cBoolToPy(silent) + ", " + cBoolToPy(allModels) + ")");
@@ -3828,13 +3992,13 @@ public class APIPython : MonoBehaviour {
     public static void enableOutline() {
 
         try {
-            OutlineEffectUtil outlineScript = Camera.main.gameObject.GetComponent<OutlineEffectUtil>();
+           /* OutlineEffectUtil outlineScript = Camera.main.gameObject.GetComponent<OutlineEffectUtil>();
             if (outlineScript == null) {
                 outlineScript =  Camera.main.gameObject.AddComponent<OutlineEffectUtil>();
             }
 
             outlineScript.enableOutline();
-
+           */
         }
         catch {
             Debug.LogError("Couldn't enable Outline effect");
@@ -3850,13 +4014,13 @@ public class APIPython : MonoBehaviour {
     public static void disableOutline() {
 
         try {
-            OutlineEffectUtil outlineScript = Camera.main.gameObject.GetComponent<OutlineEffectUtil>();
+           /* OutlineEffectUtil outlineScript = Camera.main.gameObject.GetComponent<OutlineEffectUtil>();
             if (outlineScript == null) {
                 outlineScript =  Camera.main.gameObject.AddComponent<OutlineEffectUtil>();
             }
 
             outlineScript.disableOutline();
-
+           */
         }
         catch {
             Debug.LogError("Couldn't disable Outline effect");
@@ -5050,6 +5214,53 @@ public class APIPython : MonoBehaviour {
         UnityMolMain.recordPythonCommand("annotateAtomText(\"" + structureName + "\", " + atomId + ", \"" + text + "\")");
         UnityMolMain.recordUndoPythonCommand("removeAnnotationAtomText(\"" + structureName + "\", " + atomId + ", \"" + text + "\")");
     }
+     
+     // NO FUNCIONA
+     public static void annotateResidueText(string SelectionName, int resId, Transform parent) {
+
+        UnityMolAnnotationManager anM = UnityMolMain.getAnnotationManager();
+        UnityMolSelectionManager sm = UnityMolMain.getSelectionManager();
+
+        if (sm.selections.Count == 0) {
+            Debug.LogWarning("No selections loaded");
+            return;
+        }
+
+        UnityMolSelection s = sm.selections[SelectionName];
+        
+        bool found = false;
+
+        for (int i = 0; i < s.atoms.Count ; i++) {
+            
+           //Debug.Log("->>>" + s.atoms[i].residue.id + "==" + resId);
+
+            if (s.atoms[i].residue.id == resId && !found) {
+                found = true;
+
+                GameObject hh = new GameObject();// GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                hh.tag = "etiquetas";
+                //hh.transform.localScale = Vector3.one * 0.01f;
+                hh.transform.SetParent(parent.transform.parent.transform, true);                
+                hh.transform.localPosition = s.atoms[i].position;
+
+                GameObject t = Instantiate( Resources.Load<GameObject>("Prefabs/GUI_ForceLeft"),hh.transform);
+                t.GetComponent<lookatobj>().updateText(s.atoms[i].residue.name);
+
+                Vector3 posRadial = Vector3.Normalize(hh.transform.position - parent.transform.position);
+
+                t.GetComponent<LineRenderer>().SetPosition(0,hh.transform.position);
+                t.GetComponent<LineRenderer>().SetPosition(1,hh.transform.position+posRadial*0.1f);
+                //Debug.LogError(posRadial);
+                        
+                t.transform.GetChild(0).GetComponent<RectTransform>().position = hh.transform.position + posRadial * 0.1f;
+
+
+                       
+            }            
+        }
+     }
+
+
 
     public static void removeAnnotationAtomText(string structureName, int atomId, string text) {
 

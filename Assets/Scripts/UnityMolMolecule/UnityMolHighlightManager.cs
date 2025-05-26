@@ -131,7 +131,7 @@ public class UnityMolHighlightManager {
     }
 
     public void HighlightAtoms(UnityMolSelection selection) {
-        HighlightAtomsMerge(selection);
+        //HighlightAtomsMerge(selection);
     }
 
     public void HighlightAtomsMerge(UnityMolSelection selection) {
@@ -266,7 +266,7 @@ public class UnityMolHighlightManager {
     public void Clean() {
         foreach (GameObject go in highlightDict.Values) {
 #if UNITY_EDITOR
-            GameObject.DestroyImmediate(go);
+            GameObject.Destroy(go);
 #else
             GameObject.Destroy(go);
 #endif

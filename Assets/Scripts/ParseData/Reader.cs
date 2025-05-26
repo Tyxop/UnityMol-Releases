@@ -221,7 +221,7 @@ public abstract class Reader {
                 if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
                 {
                     result = www.downloadHandler.text;
-                    Debug.Log(result);
+                   // Debug.Log(result);
                 }
                 else
                 {
@@ -409,27 +409,63 @@ public abstract class Reader {
             collidersT = new GameObject("Colliders").transform;
         }
         collidersT.parent = repParent;
+        GameObject hook = GameObject.FindGameObjectWithTag("Hook");
+        Rigidbody HookRigBody = hook.GetComponent<Rigidbody>();
+
+        // Inicializar valores para rastrear los límites
+        //Vector3 minBounds = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        //Vector3 maxBounds = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
         Dictionary<UnityMolAtom, GameObject> atomToGo = new Dictionary<UnityMolAtom, GameObject>();
+
         foreach (UnityMolAtom a in sel.atoms) {
 
             GameObject curA = null;
             if (useFullAtomName)
                 curA = new GameObject(a.ToString());
             else
-                curA = new GameObject("Atom");
+                curA = new GameObject("Atom_"+sel.name);
 
             curA.transform.parent = collidersT.transform;
             curA.transform.localPosition = a.position;
             curA.transform.localScale = Vector3.one;
-                // NEW Add eperimento put spherical colliders
-                SphereCollider spColl =  curA.AddComponent<SphereCollider>();
-                spColl.radius = 2.0f;
-                
-                /// ----------------------------------------
+            // NEW Add eperimento put spherical colliders
+            SphereCollider spColl =  curA.AddComponent<SphereCollider>();
+            spColl.isTrigger = true;
+            spColl.radius = 2.0f;
+            curA.tag = "AtomCollider";
+      
             atomToGo[a] = curA;
-        }
-        if (sel.structures[0].atomToGo == null || sel.structures[0].atomToGo.Count == 0) {
+            
+             /*
+            // Actualizar los límites
+            minBounds.x = Mathf.Min(minBounds.x, a.position.x);
+            minBounds.y = Mathf.Min(minBounds.y, a.position.y);
+            minBounds.z = Mathf.Min(minBounds.z, a.position.z);
+
+            maxBounds.x = Mathf.Max(maxBounds.x, a.position.x);
+            maxBounds.y = Mathf.Max(maxBounds.y, a.position.y);
+            maxBounds.z = Mathf.Max(maxBounds.z, a.position.z);
+            */
+            }
+       /*
+            // Después del bucle, crear un collider envolvente
+            // Calcular el centro del collider envolvente
+            Vector3 center = (minBounds + maxBounds) * 0.5f;
+
+            // Para BoxCollider
+            GameObject boundingBox = new GameObject("BoundingBox");
+            boundingBox.transform.parent = collidersT.transform;
+            boundingBox.transform.localPosition = center;
+            BoxCollider boxCollider = boundingBox.AddComponent<BoxCollider>();
+            // Calcular tamaño (size) del box collider
+            boxCollider.size = maxBounds - minBounds;
+            // Aumentarlo un poco para incluir los radios de los colliders de los átomos
+            boxCollider.size += new Vector3(1.0f, 1.0f, 1.0f); // 2 * radio en cada dirección
+           
+        */
+
+            if (sel.structures[0].atomToGo == null || sel.structures[0].atomToGo.Count == 0) {
             sel.structures[0].atomToGo = atomToGo;
         }
         else { //Merge
@@ -441,11 +477,9 @@ public abstract class Reader {
         collidersT.transform.localPosition = Vector3.zero;
         collidersT.transform.localRotation = Quaternion.identity;
         collidersT.transform.localScale = Vector3.one;
-
-          
-
-
+  
     }
+ 
     public static SurfaceThread startSurfaceThread(UnityMolSelection sel) {
         Transform t = sel.structures[0].currentModel.allAtoms[0].correspondingGo.transform.parent;
         SurfaceThread sf = new SurfaceThread();
@@ -453,9 +487,7 @@ public abstract class Reader {
         sf.StartThread();
         return sf;
     }
-
-
-
+         
     /// <summary>
     /// Fills the structureType field in the UnityMolStructure class based on atom names, uses the 5000 first atoms
     /// </summary>

@@ -8,7 +8,7 @@ public class VRDebugPanel : MonoBehaviour
     public TextMeshProUGUI debugText;
     private static VRDebugPanel instance;
     private static List<string> logMessages = new List<string>();
-    private static int maxMessages = 100;
+    private static int maxMessages = 30;
     private static StringBuilder builder = new StringBuilder();
 
     private void Awake()

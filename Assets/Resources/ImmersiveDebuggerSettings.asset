@@ -19,14 +19,13 @@ MonoBehaviour:
     - UIEditorSetup
   immersiveDebuggerEnabled: 0
   immersiveDebuggerDisplayAtStartup: 0
-  immersiveDebuggerToggleDisplayButton: 2
   showInspectors: 0
   showConsole: 0
-  followOverride: 1
+  followOverride: 0
   rotateOverride: 0
   showInfoLog: 0
-  showWarningLog: 1
-  showErrorLog: 1
+  showWarningLog: 0
+  showErrorLog: 0
   collapsedIdenticalLogEntries: 0
   maximumNumberOfLogEntries: 1000
   panelDistance: 1
@@ -35,9 +34,14 @@ MonoBehaviour:
   panelLayer: 20
   meshRendererLayer: 21
   overlayDepth: 10
-  inspectedDataEnabled: 0101
+  inspectedDataEnabled: 0000
   inspectedDataAssets:
   - {fileID: 11400000, guid: 7d2b5c7a7c5e53542ab61e3e1f5a2785, type: 2}
   - {fileID: 11400000, guid: 168f7a776bb65884397aab8376e40c7d, type: 2}
   useCustomIntegrationConfig: 0
   customIntegrationConfigClassName: 
+  hierarchyViewShowsPrivateMembers: 0
+  clickButton: 8193
+  toggleFollowTranslationButton: 0
+  toggleFollowRotationButton: 0
+  immersiveDebuggerToggleDisplayButton: 2

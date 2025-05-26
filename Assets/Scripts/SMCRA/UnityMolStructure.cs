@@ -51,6 +51,7 @@ using UnityEngine;
 using UnityEngine.XR;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 
 //using VRTK;
 namespace UMol {
@@ -284,48 +285,142 @@ public class UnityMolStructure {
 		}
 	}
 
-	public void readTrajectoryXDR(string trajPath) {
-		if (xdr == null && !trajectoryLoaded) {
-			xdr = new XDRFileReader();
-		}
-		int result = xdr.open_trajectory(this, trajPath);
-		if (result >= 0 ) {
-			xdr.load_trajectory();
-		}
-		else if (result == (int) XDRFileReaderStatus.TRAJECTORYPRESENT) {
-			throw new System.Exception("Trajectory already exists");
-		}
-		else {
-			unloadTrajectoryXDR();
-			throw new System.Exception("Trajectory reader failure " + result);
-		}
-	}
+        public void readTrajectoryXDR(string trajPath)
+        {
+           /* if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                // Usa el parser en C# para Android
+				Debug.LogError("readTrajectoryXDR");
+				readTrajectoryXTC_Android(trajPath);
+            }
+            else
+            {*/
+                // Usa el lector XDR normal para otras plataformas
+                if (xdr == null && !trajectoryLoaded)
+                {
+                    xdr = new XDRFileReader();
+                }
+                int result = xdr.open_trajectory(this, trajPath);
+                if (result >= 0)
+                {
+                    xdr.load_trajectory();
+                }
+                else if (result == (int)XDRFileReaderStatus.TRAJECTORYPRESENT)
+                {
+                    throw new System.Exception("Trajectory already exists");
+                }
+                else
+                {
+                    unloadTrajectoryXDR();
+                    throw new System.Exception("Trajectory reader failure " + result);
+                }
+           // }
+        }
+        private void readTrajectoryXTC_Android(string trajPath)
+        {
 
-	public void unloadTrajectoryXDR() {
-		if (xdr != null) {
-			xdr.Clear();
-			xdr = null;
-			for (int i = 0; i < currentModel.allAtoms.Count; i++) {
-				currentModel.allAtoms[i].position = currentModel.allAtoms[i].oriPosition;
-			}
-			currentModel.ComputeCenterOfGravity();
+			 
+            Debug.LogError("readTrajectoryXTC_Android");
+            try
+            {
+                // Obtener el número de átomos y frames en el archivo XTC
+                int numAtoms = XTCTrajectoryParserCSharp.GetAtomCount(trajPath);
+                int numFrames = XTCTrajectoryParserCSharp.GetFrameCount(trajPath);
 
-			updateRepresentations(trajectory: false);
+				Debug.LogError("NUM ATOMS " + numAtoms + " NumFrames " + numFrames);
 
-			trajAtomPositions = null;
-		}
+                if (numAtoms != currentModel.allAtoms.Count)
+                {
+                    Debug.LogWarning("Trajectory atom count does not match model atom count: " +
+					numAtoms + " vs " + currentModel.allAtoms.Count);
+                }
 
-		if (trajPlayer) {
-			GameObject.DestroyImmediate(trajPlayer);
-		}
+                // Inicializar variables para controlar la trayectoria
+                trajectoryLoaded = true;
+                this.modelFrames = new List<Vector3[]>();
+
+                // Leer todos los frames con XTCTrajectoryParserCSharp (puede ajustarse para leer de forma progresiva si es necesario)
+                List<Vector3[]> frames = XTCTrajectoryParserCSharp.GetTrajectory(trajPath);
+                this.modelFrames.AddRange(frames);
+
+                Debug.Log("Successfully loaded " + frames.Count + " frames from XTC file");
+
+                // Configurar para usar el primer frame
+                if (frames.Count > 0)
+                {
+                    trajAtomPositions = frames[0];
+                    trajUpdateAtomPositions();
+                    currentFrameId = 0;
+
+                    // Actualizar representaciones
+                    updateRepresentations(trajectory: true);
+
+                    // Crear el reproductor de trayectoria si no existe
+                    if (trajPlayer == null)
+                    {
+                        createTrajectoryPlayer();
+                    }
+                }
+
+                // Marcar como modo trayectoria
+                trajectoryMode = true;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error loading XTC trajectory: " + e.Message);
+                trajectoryLoaded = false;
+                throw;
+            }
+        }
+        public void unloadTrajectoryXDR()
+        {
+            if (Application.platform == RuntimePlatform.Android && trajectoryLoaded)
+            {
+                if (modelFrames != null)
+                {
+                    modelFrames.Clear();
+                    modelFrames = null;
+                }
+
+                trajectoryLoaded = false;
+
+                // Restaurar posiciones originales
+                for (int i = 0; i < currentModel.allAtoms.Count; i++)
+                {
+                    currentModel.allAtoms[i].position = currentModel.allAtoms[i].oriPosition;
+                }
+                currentModel.ComputeCenterOfGravity();
+
+                updateRepresentations(trajectory: false);
+
+                trajAtomPositions = null;
+            }
+            else if (xdr != null)
+            {
+                xdr.Clear();
+                xdr = null;
+                for (int i = 0; i < currentModel.allAtoms.Count; i++)
+                {
+                    currentModel.allAtoms[i].position = currentModel.allAtoms[i].oriPosition;
+                }
+                currentModel.ComputeCenterOfGravity();
+
+                updateRepresentations(trajectory: false);
+
+                trajAtomPositions = null;
+            }
+
+            if (trajPlayer)
+            {
+                GameObject.DestroyImmediate(trajPlayer);
+            }
 #if !DISABLE_HIGHLIGHT
-		UnityMolHighlightManager hM = UnityMolMain.getHighlightManager();
-		hM.Clean();
+            UnityMolHighlightManager hM = UnityMolMain.getHighlightManager();
+            hM.Clean();
 #endif
+        }
 
-	}
-
-	public void readDX(string dxPath) {
+        public void readDX(string dxPath) {
 		if (dxr != null) {
 			unloadDX();
 		}
@@ -481,46 +576,107 @@ public class UnityMolStructure {
 		Debug.LogError("This structure does not contain several models");
 	}
 
-	public void trajNext(bool forward = true, bool loop = true) {
-		if (xdr != null && trajectoryLoaded) {
-			int newFrameId = 0;
-			if (forward) {
-				newFrameId = xdr.currentFrame + 1;
-				if (newFrameId >= xdr.numberFrames) {
-					if (loop) {
-						xdr.sync_scene_with_frame(0);
-					}
-					else {
-						xdr.sync_scene_with_frame(xdr.numberFrames - 1);
-					}
-				}
-				else {
-					xdr.sync_scene_with_frame(newFrameId);
-				}
-			}
-			else {
-				newFrameId = xdr.currentFrame - 1;
-				if (newFrameId < 0) {
-					if (loop) {
-						xdr.sync_scene_with_frame(xdr.numberFrames - 1);
-					}
-					else {
-						xdr.sync_scene_with_frame(0);
-					}
-				}
-				else {
-					xdr.sync_scene_with_frame(newFrameId);
-				}
-			}
+        public void trajNext(bool forward = true, bool loop = true)
+        {
+            if (Application.platform == RuntimePlatform.Android && trajectoryLoaded)
+            {
+                int newFrameId = 0;
+                if (forward)
+                {
+                    newFrameId = currentFrameId + 1;
+                    if (newFrameId >= modelFrames.Count)
+                    {
+                        if (loop)
+                        {
+                            currentFrameId = 0;
+                        }
+                        else
+                        {
+                            currentFrameId = modelFrames.Count - 1;
+                        }
+                    }
+                    else
+                    {
+                        currentFrameId = newFrameId;
+                    }
+                }
+                else
+                {
+                    newFrameId = currentFrameId - 1;
+                    if (newFrameId < 0)
+                    {
+                        if (loop)
+                        {
+                            currentFrameId = modelFrames.Count - 1;
+                        }
+                        else
+                        {
+                            currentFrameId = 0;
+                        }
+                    }
+                    else
+                    {
+                        currentFrameId = newFrameId;
+                    }
+                }
 
-			updateRepresentations();
-		}
-		else {
-			Debug.LogError("No trajectory loaded for this structure");
-		}
-	}
+                // Actualizar posiciones con el frame actual
+                trajAtomPositions = modelFrames[currentFrameId];
+                trajUpdateAtomPositions();
+                updateRepresentations(trajectory: true);
+            }
+            else if (xdr != null && trajectoryLoaded)
+            {
+                // Código original para otras plataformas
+                int newFrameId = 0;
+                if (forward)
+                {
+                    newFrameId = xdr.currentFrame + 1;
+                    if (newFrameId >= xdr.numberFrames)
+                    {
+                        if (loop)
+                        {
+                            xdr.sync_scene_with_frame(0);
+                        }
+                        else
+                        {
+                            xdr.sync_scene_with_frame(xdr.numberFrames - 1);
+                        }
+                    }
+                    else
+                    {
+                        xdr.sync_scene_with_frame(newFrameId);
+                    }
+                }
+                else
+                {
+                    newFrameId = xdr.currentFrame - 1;
+                    if (newFrameId < 0)
+                    {
+                        if (loop)
+                        {
+                            xdr.sync_scene_with_frame(xdr.numberFrames - 1);
+                        }
+                        else
+                        {
+                            xdr.sync_scene_with_frame(0);
+                        }
+                    }
+                    else
+                    {
+                        xdr.sync_scene_with_frame(newFrameId);
+                    }
+                }
 
-	public void trajNextSmooth(float t, bool forward = true, bool loop = true, bool newFrame = false) {
+                updateRepresentations();
+            }
+            else
+            {
+                Debug.LogError("No trajectory loaded for this structure");
+            }
+        }
+
+        public void trajNextSmooth(float t, bool forward = true, bool loop = true, bool newFrame = false) {
 		if (xdr != null && trajectoryLoaded) {
 			int newFrameId = xdr.currentFrame;
 			if (forward) {
@@ -563,25 +719,44 @@ public class UnityMolStructure {
 	}
 
 
-	public void trajSetFrame(int idF) {
-		if (xdr != null && trajectoryLoaded) {
-			if (idF >= 0 && idF < xdr.numberFrames) {
-				xdr.sync_scene_with_frame(idF);
-				updateRepresentations();
-			}
-			else {
-				Debug.LogWarning("Wrong frame number");
-			}
-		}
-		else {
-			Debug.LogError("No trajectory loaded for this structure");
-		}
-	}
+    public void trajSetFrame(int idF)
+    {
+        if (Application.platform == RuntimePlatform.Android && trajectoryLoaded)
+        {
+            if (idF >= 0 && idF < modelFrames.Count)
+            {
+                currentFrameId = idF;
+                trajAtomPositions = modelFrames[idF];
+                trajUpdateAtomPositions();
+                updateRepresentations(trajectory: true);
+            }
+            else
+            {
+                Debug.LogWarning("Wrong frame number");
+            }
+        }
+        else if (xdr != null && trajectoryLoaded)
+        {
+            if (idF >= 0 && idF < xdr.numberFrames)
+            {
+                xdr.sync_scene_with_frame(idF);
+                updateRepresentations();
+            }
+            else
+            {
+                Debug.LogWarning("Wrong frame number");
+            }
+        }
+        else
+        {
+            Debug.LogError("No trajectory loaded for this structure");
+        }
+    }
 
-	/// <summary>
-	/// Update positions of GameObject recorded in atomToGo and update representations with new positions
-	/// </summary>
-	public void updateRepresentations(bool trajectory = true) {
+        /// <summary>
+        /// Update positions of GameObject recorded in atomToGo and update representations with new positions
+        /// </summary>
+        public void updateRepresentations(bool trajectory = true) {
 
 		UnityMolMain.getPrecompRepManager().Clear(uniqueName);
 

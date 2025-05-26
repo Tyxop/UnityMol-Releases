@@ -204,6 +204,7 @@ public class PDBParser : MonoBehaviour
             // Add sphere collider at the center
             SphereCollider collider = modelObj.AddComponent<SphereCollider>();
             collider.radius = sphereRadius;
+            collider.gameObject.tag = "AtomCollider";
 
             
             // Add a visible sphere to visualize the collider

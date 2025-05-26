@@ -2024,7 +2024,7 @@ public class UIManager : MonoBehaviour {
 			t.text += "Off";
 		}
 		else {
-			APIPython.enableOutline();
+			//APIPython.enableOutline();
 			t.text += "On";
 		}
 		t.text += "</color></b>";

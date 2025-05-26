@@ -94,16 +94,55 @@ public class ReadSaveFilesWithBrowser : MonoBehaviour
             }
             else {                    
                  
-                API.APIPython.load(path, readHetm, false, true, true, false, showType);
+                API.APIPython.load_reposudoe(path, readHetm, false, true, true, false, showType);
                 
             }
         }
     }
 
+    public void loadFileFromPath_repo_sudoe(string path, bool readHetm, string showType = "c", string paso="molecula")
+    {
+
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+    path = path.Replace("file:/", "");
+#endif
+        if (!string.IsNullOrEmpty(path))
+        {
+
+            if (path.EndsWith(".xtc"))
+            {
+                lastStructureName = API.APIPython.last().uniqueName;
+                if (lastStructureName != null)
+                {
+
+                    API.APIPython.loadTraj(lastStructureName, path);
+                }
+            }
+            else if (path.EndsWith(".dx"))
+            {
+                lastStructureName = API.APIPython.last().uniqueName;
+                if (lastStructureName != null)
+                {
+                    API.APIPython.loadDXmap(lastStructureName, path);
+                }
+            }
+            else if (path.EndsWith(".py"))
+            {
+                API.APIPython.loadHistoryScript(path);
+            }
+            else if (path.EndsWith(".itp"))
+            {
+                //WARNING Not published yet
+            }
+            else
+            {
+                API.APIPython.load_reposudoe(path, readHetm, false, true, true, false, showType, paso);
+            }
+        }
+    }
 
     public void readFiles(bool readHetm = true, bool forceDesktop = false)
     {
-
         string[] paths = filesToRead(initPath, extension, readHetm, forceDesktop);
         if (paths != null && paths.Length != 0) {
             if(paths[0] != "")

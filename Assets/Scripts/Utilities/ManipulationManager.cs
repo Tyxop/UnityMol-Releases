@@ -107,15 +107,19 @@ public class ManipulationManager : MonoBehaviour {
             Transform tpar = UnityMolMain.getRepresentationParent().transform;
             Vector3 bary = s.currentModel.centerOfGravity;
             Transform molPar = tpar.Find(s.ToSelectionName());
+
+            if (!molPar) molPar = GameObject.Find(s.ToSelectionName()).transform;
+
             Vector3 worldBary = molPar.TransformPoint(bary);
             if (!UnityMolMain.inVR()) {
-                tpar.Translate(-worldBary, Space.World);
+                //tpar.Translate(-worldBary, Space.World);
+                tpar.localPosition = -worldBary;
                 setRotationCenter(molPar.TransformPoint(bary));
             }
             else {
                 tpar.Translate(-worldBary, Space.World);
 
-                    Transform head = Camera.main.transform; // VRTK.VRTK_DeviceFinder.HeadsetCamera();
+                Transform head = Camera.main.transform; // VRTK.VRTK_DeviceFinder.HeadsetCamera();
 
                 if (head != null) {
                     Vector3 targetPos = head.position + head.forward;
