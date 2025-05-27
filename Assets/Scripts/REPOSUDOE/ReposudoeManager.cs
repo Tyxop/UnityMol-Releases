@@ -125,14 +125,15 @@ public class ReposudoeManager : MonoBehaviour
         // Tambien se crea un aversin en surface
         btnLoadMolecule();
 
-        // carga aniamcion de molecula
-        btnLoadMoleculeAnimation();
-        btnLoadAnim();
-
+      
         // Es la animacion que crea colisionadores para enseñar el ligando colocado
         btnLoadPosLigando();
         // Ligando para arrastrar
         btnLoadLigando();
+
+        // carga aniamcion de molecula
+        btnLoadMoleculeAnimation();
+        btnLoadAnim();
 
       
     }
@@ -413,6 +414,7 @@ public class ReposudoeManager : MonoBehaviour
         Debug.LogError("estructura para la animacion -> " + readScr.lastStructureName);
 
         UnityMolStructure s = sm.GetStructure(readScr.lastStructureName);
+        if (s.modelsPlayer == null) s.createModelPlayer(); // Crea el model player si no lo tiene
         s.trajPlayer.looping = true;
         s.trajPlayer.smoothing = true;
         s.trajPlayer.play = playit;// Hack
