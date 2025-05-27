@@ -283,7 +283,7 @@ public class ReposudoeManager : MonoBehaviour
     }
 
     // Animacion de la molecula con el ligando incluido
-    public void btnLoadAnim()
+    /*public void btnLoadAnim()
     {
         Debug.LogError("Aplication->  " + Application.platform);
         string fileName = "center.xtc";
@@ -299,67 +299,117 @@ public class ReposudoeManager : MonoBehaviour
 
         Debug.LogError("FILEPATH ANIM " + filePath);
 
-       /* if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
-        {
-            Debug.LogError("ANDROIDDDDD " + filePath);
-            
-            LoadAnimationAndroid(filePath, false); // Cargamos el fichero en memoria
+        
+            // esto afecta a una molecula.. si funciona
+      
+    }*/
 
+
+    public void btnLoadAnim()
+    {
+        Debug.LogError("=== btnLoadAnim ===");
+        Debug.LogError("Application.platform: " + Application.platform);
+
+        string fileName = "center.xtc";
+        string filePath = "";
+
+        if (isExternal)
+        {
+            filePath = Path.Combine(Application.dataPath, "..", "external", subFolder, fileName);
+            Debug.LogError("External file path: " + filePath);
+
+            // Para archivos externos, usar el método normal
+            readScr.loadFileFromPath_repo_sudoe(filePath, false);
         }
         else
-        {*/
-            // esto afecta a una molecula.. si funciona
-            readScr.loadFileFromPath_repo_sudoe(filePath, false);
-       // }
-
-
-        // Prueba de animacion
-        //playAnim(true);
-    }
-
-
-    public void LoadAnimationAndroid(string pathtofolder, bool isExternal)
-    {
-        if (pathtofolder != "")
         {
-            Debug.Log("LoadAnimationAndroid");
-            StartCoroutine(LoadBinaryData(pathtofolder));
-        }
-    }
+            filePath = Path.Combine(Application.streamingAssetsPath, subFolder, fileName);
+            Debug.LogError("StreamingAssets file path: " + filePath);
 
-    public MemoryStream memStream;
-    public byte[] binaryData;
-    IEnumerator LoadBinaryData(string filePath)
-    {
-        Debug.Log($"LoadBinaryData: Attempting to load from {filePath}");
-        // Check if we need to use UnityWebRequest (streaming assets, web, or remote URLs)
-        if (filePath.Contains("://") || filePath.Contains(":///") ||            
-            filePath.Contains(Application.streamingAssetsPath))
-        {
-            Debug.Log("Using UnityWebRequest for file loading");
-            using (UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(filePath))
+            // Verificar si necesitamos el workaround para Android
+            if (AndroidFileHandler.RequiresAndroidWorkaround(filePath))
             {
-                yield return www.SendWebRequest();
-
-                if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-                {
-                    // Copy data to prevent issues when UnityWebRequest is disposed
-                    binaryData = new byte[www.downloadHandler.data.Length];
-                    System.Array.Copy(www.downloadHandler.data, binaryData, www.downloadHandler.data.Length);
-                    
-                    readScr.loadFileFromPath_repo_sudoe(filePath, false);
-
-                    Debug.Log($"Successfully loaded binary data: {binaryData.Length} bytes");
-                }
-                else
-                {
-                    Debug.LogError($"Error loading binary data: {www.error}");
-                    Debug.LogError($"Response Code: {www.responseCode}");
-                    binaryData = null;
-                }
+                Debug.LogError("Using Android workaround for file loading");
+                string relativePath = Path.Combine(subFolder, fileName);
+                StartCoroutine(LoadTrajectoryAndroid(relativePath));
+            }
+            else
+            {
+                Debug.LogError("Using standard file loading");
+                readScr.loadFileFromPath_repo_sudoe(filePath, false);
             }
         }
     }
+
+    // Nuevo método para cargar trayectorias en Android
+    private IEnumerator LoadTrajectoryAndroid(string relativePath)
+    {
+        Debug.LogError("=== LoadTrajectoryAndroid ===");
+        Debug.LogError("Relative path: " + relativePath);
+
+        bool loadingComplete = false;
+        bool loadingError = false;
+        string errorMessage = "";
+        string cachedFilePath = "";
+
+        // Copiar archivo a cache
+        yield return StartCoroutine(AndroidFileHandler.CopyStreamingAssetToCache(
+            relativePath,
+            (string path) => {
+                cachedFilePath = path;
+                loadingComplete = true;
+                Debug.LogError("File cached successfully: " + path);
+            },
+            (string error) => {
+                errorMessage = error;
+                loadingError = true;
+                Debug.LogError("Error caching file: " + error);
+            }
+        ));
+
+        // Esperar a que termine la copia
+        while (!loadingComplete && !loadingError)
+        {
+            yield return null;
+        }
+
+        if (loadingError)
+        {
+            Debug.LogError("Failed to cache trajectory file: " + errorMessage);
+            yield break;
+        }
+
+        if (string.IsNullOrEmpty(cachedFilePath) || !File.Exists(cachedFilePath))
+        {
+            Debug.LogError("Cached file path is invalid or file doesn't exist");
+            yield break;
+        }
+
+        Debug.LogError("Loading trajectory from cached path: " + cachedFilePath);
+
+        // Verificar el tamaño del archivo
+        FileInfo fileInfo = new FileInfo(cachedFilePath);
+        Debug.LogError("Cached file size: " + fileInfo.Length + " bytes");
+
+        if (fileInfo.Length == 0)
+        {
+            Debug.LogError("Cached file is empty");
+            yield break;
+        }
+
+        // Cargar la trayectoria usando el archivo cacheado
+        try
+        {
+            readScr.loadFileFromPath_repo_sudoe(cachedFilePath, false);
+            Debug.LogError("Trajectory loading initiated successfully");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error loading trajectory: " + e.Message);
+            Debug.LogError("Stack trace: " + e.StackTrace);
+        }
+    }
+
 
 
     public bool isPlaying;
